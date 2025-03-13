@@ -3,7 +3,6 @@
 
 using Duende.IdentityServer;
 using IdentityServerHost;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 internal static class HostingExtensions
@@ -11,11 +10,6 @@ internal static class HostingExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddRazorPages();
-        builder.Services.AddSwaggerGen(c =>
-        {
-	        c.SwaggerDoc("v1", new OpenApiInfo() { Title = "Consumer.API", Version = "v1" });
-        });
-
 		var idsvrBuilder = builder.Services.AddIdentityServer(options =>
         {
             options.Events.RaiseErrorEvents = true;
@@ -62,11 +56,9 @@ internal static class HostingExtensions
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-		}
+        }
 
-		app.UseStaticFiles();
+        app.UseStaticFiles();
 
         app.UseRouting();
         app.UseIdentityServer();

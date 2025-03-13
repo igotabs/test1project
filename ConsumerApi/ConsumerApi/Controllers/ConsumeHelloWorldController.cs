@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using ConsumerApi.Tools;
 using Duende.IdentityModel;
@@ -21,18 +20,15 @@ namespace ConsumerApi.Controllers
 		};
 
 		private readonly string? _identityServerBaseUrl;
-		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ILogger<ConsumeHelloWorldController> _logger;
 		private readonly string? _helloWorldApiBaseUrl;
 
 		public ConsumeHelloWorldController(
 			IConfiguration configuration,
-			IHttpClientFactory httpClientFactory,
 			ILogger<ConsumeHelloWorldController> logger)
 		{
 			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
 			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"] ?? throw new ArgumentNullException(nameof(_helloWorldApiBaseUrl));
-			_httpClientFactory = httpClientFactory;
 			_logger = logger;
 		}
 
@@ -122,12 +118,18 @@ namespace ConsumerApi.Controllers
 
 		async Task<HelloWorld?> CallServiceAsync(string token)
 		{
-			var client = _httpClientFactory.CreateClient("HelloWorldClient");
-
-			// Set the bearer token on the client
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-			var response = await client.GetStringAsync($"HelloWorld");
+			var httpClientHandler = new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+				{
+					// Return 'true' to allow any cert
+					return true;
+				}
+			};
+			var httpClient = new HttpClient(httpClientHandler);
+			httpClient.BaseAddress = new Uri(_helloWorldApiBaseUrl);
+			httpClient.SetBearerToken(token);
+			var response = await httpClient.GetStringAsync($"HelloWorld");
 
 			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());
