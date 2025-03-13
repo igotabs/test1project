@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ConsumerApi.Tools;
@@ -26,21 +27,34 @@ namespace ConsumerApi.Controllers
 			IConfiguration configuration,
 			ILogger<ConsumeHelloWorldController> logger)
 		{
-			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"];
-			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"];
+			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
+			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"] ?? throw new ArgumentNullException(nameof(_helloWorldApiBaseUrl));
 			_logger = logger;
 		}
 
 		[HttpGet(Name = "GetWeatherForecast")]
-		public async Task<HelloWorld?> Get()
+		public async Task<IEnumerable<HelloWorld?>> Get([FromQuery] int count = 1)
 		{
 			var jwk = new JsonWebKey(Constants.RsaKey);
 			var response = await RequestTokenAsync(new SigningCredentials(jwk, "RS256"));
 			response.Show();
+			if (String.IsNullOrEmpty(response.AccessToken)) 
+				return new List<HelloWorld?>();
 
-			var items = await CallServiceAsync(response.AccessToken);
+			// 2. Make multiple requests in parallel
+			var results = new ConcurrentBag<HelloWorld>();
 
-			return items;
+			await Parallel.ForEachAsync(
+				Enumerable.Range(1, count),
+				async (index, cancellationToken) =>
+				{
+					var item = await CallServiceAsync(response.AccessToken);
+					if (item != null) results.Add(item);
+				}
+			);
+
+			// 3. Return the accumulated list
+			return results.ToList();
 		}
 
 
@@ -115,7 +129,7 @@ namespace ConsumerApi.Controllers
 			var httpClient = new HttpClient(httpClientHandler);
 			httpClient.BaseAddress = new Uri(_helloWorldApiBaseUrl);
 			httpClient.SetBearerToken(token);
-			var response = await httpClient.GetStringAsync("HelloWorld");
+			var response = await httpClient.GetStringAsync($"HelloWorld");
 
 			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());
