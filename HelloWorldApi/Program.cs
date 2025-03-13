@@ -5,6 +5,7 @@ using RedLockNet.SERedis.Configuration;
 using RedLockNet.SERedis;
 using RedLockNet;
 using StackExchange.Redis;
+using Microsoft.OpenApi.Models;
 
 const string RedisHost = "Redis:Host";
 const string RedisPort = "Redis:Port";
@@ -22,8 +23,11 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add services to the container.
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1", new OpenApiInfo() { Title = "Movies.API", Version = "v1" });
+});
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
 {
@@ -72,6 +76,12 @@ builder.Services.AddAuthentication("token")
     });
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
 
 app.UseRouting();
 app.UseAuthentication();
