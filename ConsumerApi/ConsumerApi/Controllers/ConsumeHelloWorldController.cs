@@ -57,66 +57,6 @@ namespace ConsumerApi.Controllers
 			// 3. Return the accumulated list
 			return results.ToList();
 		}
-
-
-		async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
-		{
-			var httpClientHandler = new HttpClientHandler
-			{
-				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-				{
-					// Return 'true' to allow any cert
-					return true;
-				}
-			};
-			var client = new HttpClient(httpClientHandler);
-
-			var disco = await client.GetDiscoveryDocumentAsync(_identityServerBaseUrl);
-			if (disco.IsError) throw new Exception(disco.Error);
-
-			var clientToken = CreateClientToken(signingCredentials, "jwt.client.credentials.sample", disco.Issuer);
-			var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-			{
-				Address = disco.TokenEndpoint,
-
-				ClientAssertion =
-				{
-					Type = OidcConstants.ClientAssertionTypes.JwtBearer,
-					Value = clientToken
-				},
-
-				Scope = "scope1"
-			});
-
-			if (response.IsError) throw new Exception(response.Error);
-			return response;
-		}
-
-		string CreateClientToken(SigningCredentials credential, string clientId, string audience)
-		{
-			var now = DateTime.UtcNow;
-
-			var token = new JwtSecurityToken(
-				clientId,
-				audience,
-				new List<Claim>()
-				{
-					new Claim(JwtClaimTypes.JwtId, Guid.NewGuid().ToString()),
-					new Claim(JwtClaimTypes.Subject, clientId),
-					new Claim(JwtClaimTypes.IssuedAt, now.ToEpochTime().ToString(), ClaimValueTypes.Integer64)
-				},
-				now,
-				now.AddMinutes(1),
-				credential
-			);
-
-			var tokenHandler = new JwtSecurityTokenHandler();
-			var clientToken = tokenHandler.WriteToken(token);
-			"\n\nClient Authentication Token:".ConsoleGreen();
-			Console.WriteLine(token);
-			return clientToken;
-		}
-
 		async Task<HelloWorld?> CallServiceAsync(string token)
 		{
 			var httpClientHandler = new HttpClientHandler
