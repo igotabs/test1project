@@ -30,6 +30,7 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - IdentityServer__BaseUrl=https://identityserverhost:8081
       - HelloWorldApi__BaseUrl=https://helloworldapi:8081
+      - Redis__Host=redis
     ports:
       - "5004:8080"
       - "5003:8081"
