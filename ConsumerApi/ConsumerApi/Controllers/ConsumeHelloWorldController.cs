@@ -132,7 +132,7 @@ namespace ConsumerApi.Controllers
 			var httpClient = new HttpClient(httpClientHandler);
 			httpClient.BaseAddress = new Uri(_helloWorldApiBaseUrl);
 			httpClient.SetBearerToken(token);
-			var response = await httpClient.GetStringAsync("identity");
+			var response = await httpClient.GetStringAsync("HelloWorld");
 
 			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());

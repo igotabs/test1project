@@ -5,16 +5,16 @@ namespace HelloWorldApi;
 
 [Route("identity")]
 [ApiController]
-public class IdentityController : ControllerBase
+public class HelloWorldController : ControllerBase
 {
 	public const string ConfigUpdateResourceLock = "configUpdateResourceLock";
 	private readonly TimeSpan _redlockExpiration = TimeSpan.FromSeconds(30);
 	private readonly IDistributedLockFactory _distributedLockFactory;
-	private readonly ILogger<IdentityController> _logger;
+	private readonly ILogger<HelloWorldController> _logger;
 
-    public IdentityController(
+    public HelloWorldController(
 	    IDistributedLockFactory distributedLockFactory,
-	    ILogger<IdentityController> logger)
+	    ILogger<HelloWorldController> logger)
     {
 	    _distributedLockFactory = distributedLockFactory;
 	    _logger = logger;
