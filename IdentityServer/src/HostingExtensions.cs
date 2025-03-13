@@ -13,7 +13,6 @@ internal static class HostingExtensions
 		builder.Services.AddRazorPages();
 		var idsvrBuilder = builder.Services.AddIdentityServer(options =>
 			{
-				//to avoid the error "IdentityServerHost unreachable" when running the IdentityServerHost project
 				options.KeyManagement.Enabled = false;
 				options.Events.RaiseErrorEvents = true;
 				options.Events.RaiseInformationEvents = true;
@@ -30,7 +29,6 @@ internal static class HostingExtensions
 		idsvrBuilder.AddInMemoryApiScopes(Resources.ApiScopes);
 		idsvrBuilder.AddInMemoryApiResources(Resources.ApiResources);
 		idsvrBuilder.AddInMemoryClients(Clients.List);
-		//to avoid the error "IdentityServerHost unreachable" when running the IdentityServerHost project
 		idsvrBuilder.AddDeveloperSigningCredential();
 
 		// this is only needed for the JAR and JWT samples and adds supports for JWT-based client authentication
