@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo() { Title = "Movies.API", Version = "v1" });
+	c.SwaggerDoc("v1", new OpenApiInfo() { Title = "HelloWorld.API", Version = "v1" });
 });
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
