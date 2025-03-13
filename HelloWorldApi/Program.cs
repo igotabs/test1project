@@ -24,7 +24,13 @@ builder.Services.AddAuthentication("token")
     .AddJwtBearer("token", options =>
     {
         options.Authority = identityServerAddress;
+
         options.RequireHttpsMetadata = false;
+        options.BackchannelHttpHandler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        };
+
         options.TokenValidationParameters.ValidateAudience = false;
 
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };

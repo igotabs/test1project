@@ -31,8 +31,8 @@ services:
       - IdentityServer__BaseUrl=https://identityserverhost:8081
       - HelloWorldApi__BaseUrl=https://helloworldapi:8081
     ports:
-      - "8080"
-      - "8081"
+      - "5004:8080"
+      - "5003:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
