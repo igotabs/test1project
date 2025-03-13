@@ -1,0 +1,20 @@
+services:
+  identityserverhost:
+    image: ${DOCKER_REGISTRY-}identityserverhost
+    build:
+      context: .
+      dockerfile: IdentityServer/src/Dockerfile
+
+  helloworldapi:
+    image: ${DOCKER_REGISTRY-}helloworldapi
+    build:
+      context: .
+      dockerfile: HelloWorldApi/Dockerfile
+
+
+  consumerapi:
+    image: ${DOCKER_REGISTRY-}consumerapi
+    build:
+      context: .
+      dockerfile: ConsumerApi/ConsumerApi/Dockerfile
+

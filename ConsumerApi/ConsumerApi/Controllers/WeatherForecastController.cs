@@ -64,7 +64,15 @@ namespace ConsumerApi.Controllers
 
 		async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
 		{
-			var client = new HttpClient();
+			var httpClientHandler = new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+				{
+					// Return 'true' to allow any cert
+					return true;
+				}
+			};
+			var client = new HttpClient(httpClientHandler);
 
 			var disco = await client.GetDiscoveryDocumentAsync(_identityServerBaseUrl);
 			if (disco.IsError) throw new Exception(disco.Error);
@@ -114,13 +122,18 @@ namespace ConsumerApi.Controllers
 
 		async Task CallServiceAsync(string token)
 		{
-			var client = new HttpClient
+			var httpClientHandler = new HttpClientHandler
 			{
-				BaseAddress = new Uri(_helloWorldApiBaseUrl)
+				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+				{
+					// Return 'true' to allow any cert
+					return true;
+				}
 			};
-
-			client.SetBearerToken(token);
-			var response = await client.GetStringAsync("identity");
+			var httpClient = new HttpClient(httpClientHandler);
+			httpClient.BaseAddress = new Uri(_helloWorldApiBaseUrl);
+			httpClient.SetBearerToken(token);
+			var response = await httpClient.GetStringAsync("identity");
 
 			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());

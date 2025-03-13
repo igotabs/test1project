@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsumerApi", "ConsumerApi\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServerHost", "IdentityServer\src\IdentityServerHost.csproj", "{5F154B1E-511A-468D-A08F-1793CB6D774E}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{7A18788D-4276-430B-B3CB-ADF1D8033CDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
