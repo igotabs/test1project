@@ -1,9 +1,11 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ConsumerApi.TokenService;
 using ConsumerApi.Tools;
 using Duende.IdentityModel;
 using Duende.IdentityModel.Client;
+using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -20,26 +22,25 @@ namespace ConsumerApi.Controllers
 		};
 
 		private readonly string? _identityServerBaseUrl;
+		private readonly IHelloWorldTokenService _tokenService;
 		private readonly ILogger<ConsumeHelloWorldController> _logger;
 		private readonly string? _helloWorldApiBaseUrl;
 
 		public ConsumeHelloWorldController(
 			IConfiguration configuration,
+			IHelloWorldTokenService tokenService,
 			ILogger<ConsumeHelloWorldController> logger)
 		{
 			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
 			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"] ?? throw new ArgumentNullException(nameof(_helloWorldApiBaseUrl));
+			_tokenService = tokenService;
 			_logger = logger;
 		}
 
 		[HttpGet(Name = "GetWeatherForecast")]
 		public async Task<IEnumerable<HelloWorld?>> Get([FromQuery] int count = 1)
 		{
-			var jwk = new JsonWebKey(Constants.RsaKey);
-			var response = await RequestTokenAsync(new SigningCredentials(jwk, "RS256"));
-			response.Show();
-			if (String.IsNullOrEmpty(response.AccessToken)) 
-				return new List<HelloWorld?>();
+			var token = await _tokenService.GetAccessTokenAsync();
 
 			// 2. Make multiple requests in parallel
 			var results = new ConcurrentBag<HelloWorld>();
@@ -48,7 +49,7 @@ namespace ConsumerApi.Controllers
 				Enumerable.Range(1, count),
 				async (index, cancellationToken) =>
 				{
-					var item = await CallServiceAsync(response.AccessToken);
+					var item = await CallServiceAsync(token);
 					if (item != null) results.Add(item);
 				}
 			);
