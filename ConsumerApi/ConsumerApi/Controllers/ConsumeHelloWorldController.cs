@@ -5,8 +5,6 @@ using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using RedLockNet;
-using StackExchange.Redis;
 
 namespace ConsumerApi.Controllers
 {
