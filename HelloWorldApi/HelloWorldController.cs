@@ -3,7 +3,7 @@ using RedLockNet;
 
 namespace HelloWorldApi;
 
-[Route("identity")]
+[Route("HelloWorld")]
 [ApiController]
 public class HelloWorldController : ControllerBase
 {
