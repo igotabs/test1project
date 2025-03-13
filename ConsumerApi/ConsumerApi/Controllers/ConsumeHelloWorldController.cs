@@ -4,22 +4,23 @@ using Duende.IdentityModel;
 using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace ConsumerApi.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class WeatherForecastController : ControllerBase
+	public class ConsumeHelloWorldController : ControllerBase
 	{
 		private static readonly string[] Summaries = new[]
 		{
 			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 		};
 		private readonly string? _identityServerBaseUrl;
-		private readonly ILogger<WeatherForecastController> _logger;
+		private readonly ILogger<ConsumeHelloWorldController> _logger;
 		private readonly string? _helloWorldApiBaseUrl;
 
-		public WeatherForecastController(IConfiguration configuration, ILogger<WeatherForecastController> logger)
+		public ConsumeHelloWorldController(IConfiguration configuration, ILogger<ConsumeHelloWorldController> logger)
 		{
 			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"];
 			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"];
@@ -27,7 +28,7 @@ namespace ConsumerApi.Controllers
 		}
 
 		[HttpGet(Name = "GetWeatherForecast")]
-		public async Task<IEnumerable<WeatherForecast>> Get()
+		public async Task<HelloWorld?> Get()
 		{
 
 			// would normally load from a secure data store
@@ -50,15 +51,9 @@ namespace ConsumerApi.Controllers
 			var response = await RequestTokenAsync(new SigningCredentials(jwk, "RS256"));
 			response.Show();
 
-			await CallServiceAsync(response.AccessToken);
+			var items = await CallServiceAsync(response.AccessToken);
 
-			return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-			{
-				Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-				TemperatureC = Random.Shared.Next(-20, 55),
-				Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-			})
-			.ToArray();
+			return items;
 		}
 
 
@@ -120,7 +115,7 @@ namespace ConsumerApi.Controllers
 			return clientToken;
 		}
 
-		async Task CallServiceAsync(string token)
+		async Task<HelloWorld?> CallServiceAsync(string token)
 		{
 			var httpClientHandler = new HttpClientHandler
 			{
@@ -137,6 +132,9 @@ namespace ConsumerApi.Controllers
 
 			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());
+			var result = JsonConvert.DeserializeObject< HelloWorld>(response);
+
+			return result;
 		}
 	}
 }

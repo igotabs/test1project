@@ -17,9 +17,12 @@ public class IdentityController : ControllerBase
     [HttpGet]
     public ActionResult Get()
     {
-        var claims = User.Claims.Select(c => new { c.Type, c.Value });
-        _logger.LogInformation("claims: {claims}", claims);
+	    var responseObject = new
+	    {
+		    message = "Hello, World!",
+		    timestamp = DateTime.Now
+	    };
 
-        return new JsonResult(claims);
+		return new JsonResult(responseObject);
     }
 }
