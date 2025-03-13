@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ConsumerApi.Models;
 using ConsumerApi.TokenService;
 using ConsumerApi.Tools;
 using Duende.IdentityModel;
@@ -16,25 +17,17 @@ namespace ConsumerApi.Controllers
 	[Route("[controller]")]
 	public class ConsumeHelloWorldController : ControllerBase
 	{
-		private static readonly string[] Summaries = new[]
-		{
-			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-		};
-
 		private readonly string? _identityServerBaseUrl;
 		private readonly IHelloWorldTokenService _tokenService;
-		private readonly ILogger<ConsumeHelloWorldController> _logger;
 		private readonly string? _helloWorldApiBaseUrl;
 
 		public ConsumeHelloWorldController(
 			IConfiguration configuration,
-			IHelloWorldTokenService tokenService,
-			ILogger<ConsumeHelloWorldController> logger)
+			IHelloWorldTokenService tokenService)
 		{
 			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
 			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"] ?? throw new ArgumentNullException(nameof(_helloWorldApiBaseUrl));
 			_tokenService = tokenService;
-			_logger = logger;
 		}
 
 		[HttpGet(Name = "GetWeatherForecast")]
@@ -72,7 +65,6 @@ namespace ConsumerApi.Controllers
 			httpClient.SetBearerToken(token);
 			var response = await httpClient.GetStringAsync($"HelloWorld");
 
-			"\n\nService claims:".ConsoleGreen();
 			Console.WriteLine(response.PrettyPrintJson());
 			var result = JsonConvert.DeserializeObject< HelloWorld>(response);
 

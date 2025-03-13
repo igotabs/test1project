@@ -12,8 +12,6 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 {
 	private readonly IMemoryCache _cache;
 
-	private readonly IConfiguration _configuration;
-
 	private readonly string _identityServerBaseUrl;
 	// Add additional dependencies such as configuration if needed
 	// For instance: IConfiguration, signing credentials, discovery document, etc.
@@ -24,7 +22,6 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 	{
 		_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
 		_cache = cache;
-		_configuration = configuration;
 	}
 
 	public async Task<string> GetAccessTokenAsync()
@@ -61,7 +58,7 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 		var disco = await client.GetDiscoveryDocumentAsync(_identityServerBaseUrl);
 		if (disco.IsError) throw new Exception(disco.Error);
 
-		var clientToken = CreateClientToken(signingCredentials, "jwt.client.credentials.sample", disco.Issuer);
+		var clientToken = CreateClientToken(signingCredentials, Common.Constants.ClientId, disco.Issuer!);
 		var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
 		{
 			Address = disco.TokenEndpoint,
@@ -74,7 +71,7 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 
 			Scope = "scope1"
 		});
-
+		response.Show();
 		if (response.IsError) throw new Exception(response.Error);
 		return response;
 	}

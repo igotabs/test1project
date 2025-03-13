@@ -1,11 +1,10 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Duende.IdentityModel;
 using Duende.IdentityModel.Client;
 
-namespace ConsumerApi;
+namespace ConsumerApi.Tools;
 
 public static class TokenResponseExtensions
 {
@@ -16,7 +15,7 @@ public static class TokenResponseExtensions
             "Token response:".ConsoleGreen();
             Console.WriteLine(response.Json);
 
-            if (response.AccessToken.Contains("."))
+            if (response.AccessToken != null && response.AccessToken.Contains("."))
             {
                 "\nAccess Token (decoded):".ConsoleGreen();
 
@@ -52,7 +51,6 @@ public static class TokenResponseExtensions
     }
 }
 
-
 public static class ConsoleExtensions
 {
     /// <summary>
@@ -64,7 +62,6 @@ public static class ConsoleExtensions
     {
         text.ColoredWriteLine(ConsoleColor.Green);
     }
-
 
     /// <summary>
     /// Writes out text with the specified ConsoleColor.

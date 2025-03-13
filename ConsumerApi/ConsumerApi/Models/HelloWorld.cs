@@ -1,4 +1,4 @@
-namespace ConsumerApi
+namespace ConsumerApi.Models
 {
 	public class HelloWorld
 	{
