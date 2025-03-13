@@ -1,5 +1,4 @@
-﻿using ConsumerApi;
-using Serilog;
+﻿using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -20,10 +19,11 @@ builder.Services.AddSerilog();
 builder.Services.AddControllers();
 
 // this API will accept any access token from the authority
+string identityServerAddress = builder.Configuration["IdentityServer:BaseUrl"];
 builder.Services.AddAuthentication("token")
     .AddJwtBearer("token", options =>
     {
-        options.Authority = Urls.IdentityServer;
+        options.Authority = identityServerAddress;
         options.TokenValidationParameters.ValidateAudience = false;
 
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };

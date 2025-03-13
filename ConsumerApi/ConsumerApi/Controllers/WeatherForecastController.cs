@@ -15,11 +15,14 @@ namespace ConsumerApi.Controllers
 		{
 			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 		};
-
+		private readonly string? _identityServerBaseUrl;
 		private readonly ILogger<WeatherForecastController> _logger;
+		private readonly string? _helloWorldApiBaseUrl;
 
-		public WeatherForecastController(ILogger<WeatherForecastController> logger)
+		public WeatherForecastController(IConfiguration configuration, ILogger<WeatherForecastController> logger)
 		{
+			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"];
+			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"];
 			_logger = logger;
 		}
 
@@ -59,11 +62,11 @@ namespace ConsumerApi.Controllers
 		}
 
 
-		static async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
+		async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
 		{
 			var client = new HttpClient();
 
-			var disco = await client.GetDiscoveryDocumentAsync(Urls.IdentityServer);
+			var disco = await client.GetDiscoveryDocumentAsync(_identityServerBaseUrl);
 			if (disco.IsError) throw new Exception(disco.Error);
 
 			var clientToken = CreateClientToken(signingCredentials, "jwt.client.credentials.sample", disco.Issuer);
@@ -84,7 +87,7 @@ namespace ConsumerApi.Controllers
 			return response;
 		}
 
-		static string CreateClientToken(SigningCredentials credential, string clientId, string audience)
+		string CreateClientToken(SigningCredentials credential, string clientId, string audience)
 		{
 			var now = DateTime.UtcNow;
 
@@ -109,11 +112,11 @@ namespace ConsumerApi.Controllers
 			return clientToken;
 		}
 
-		static async Task CallServiceAsync(string token)
+		async Task CallServiceAsync(string token)
 		{
 			var client = new HttpClient
 			{
-				BaseAddress = new Uri(Urls.SampleApi)
+				BaseAddress = new Uri(_helloWorldApiBaseUrl)
 			};
 
 			client.SetBearerToken(token);
