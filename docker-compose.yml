@@ -1,22 +1,38 @@
 services:
   identityserverhost:
+    container_name: IdentityServerHost
+    hostname: identityserverhost
     image: ${DOCKER_REGISTRY-}identityserverhost
     build:
       context: .
       dockerfile: IdentityServer/src/Dockerfile
+    networks:
+      - default_network
 
   helloworldapi:
+    container_name: HelloWorldApi
+    hostname: helloworldapi
     image: ${DOCKER_REGISTRY-}helloworldapi
     build:
       context: .
       dockerfile: HelloWorldApi/Dockerfile
-
+    depends_on:
+      - identityserverhost
+      - redis
+    networks:
+      - default_network
 
   consumerapi:
+    container_name: consumerapi
+    hostname: consumerapi
     image: ${DOCKER_REGISTRY-}consumerapi
     build:
       context: .
       dockerfile: ConsumerApi/ConsumerApi/Dockerfile
+    depends_on:
+      - identityserverhost
+    networks:
+      - default_network
 
   redis:
     image: redis/redis-stack-server:latest
@@ -24,3 +40,10 @@ services:
         - 6379:6379
     volumes:
         - ./redis_data:/bitnami/redis/data
+    networks:
+      - default_network
+
+
+networks:
+  default_network:
+    driver: bridge

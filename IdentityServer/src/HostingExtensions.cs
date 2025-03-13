@@ -11,15 +11,16 @@ internal static class HostingExtensions
     {
         builder.Services.AddRazorPages();
 		var idsvrBuilder = builder.Services.AddIdentityServer(options =>
-        {
-            options.Events.RaiseErrorEvents = true;
-            options.Events.RaiseInformationEvents = true;
-            options.Events.RaiseFailureEvents = true;
-            options.Events.RaiseSuccessEvents = true;
+			{ 
+				options.KeyManagement.Enabled = false;
+	            options.Events.RaiseErrorEvents = true;
+	            options.Events.RaiseInformationEvents = true;
+	            options.Events.RaiseFailureEvents = true;
+	            options.Events.RaiseSuccessEvents = true;
 
-            // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/api_scopes
-            options.EmitStaticAudienceClaim = true;
-            options.PushedAuthorization.AllowUnregisteredPushedRedirectUris = true;
+	            // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/api_scopes
+	            options.EmitStaticAudienceClaim = true;
+	            options.PushedAuthorization.AllowUnregisteredPushedRedirectUris = true;
         })
             .AddTestUsers(TestUsers.Users);
 
@@ -27,9 +28,10 @@ internal static class HostingExtensions
         idsvrBuilder.AddInMemoryApiScopes(Resources.ApiScopes);
         idsvrBuilder.AddInMemoryApiResources(Resources.ApiResources);
         idsvrBuilder.AddInMemoryClients(Clients.List);
+        idsvrBuilder.AddDeveloperSigningCredential();
 
-        // this is only needed for the JAR and JWT samples and adds supports for JWT-based client authentication
-        idsvrBuilder.AddJwtBearerClientAuthentication();
+		// this is only needed for the JAR and JWT samples and adds supports for JWT-based client authentication
+		idsvrBuilder.AddJwtBearerClientAuthentication();
 
         builder.Services.AddAuthentication()
             .AddOpenIdConnect("Google", "Sign-in with Google", options =>
