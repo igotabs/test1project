@@ -5,6 +5,7 @@ using Duende.IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using RedLockNet;
 using StackExchange.Redis;
 
 namespace ConsumerApi.Controllers
@@ -13,22 +14,19 @@ namespace ConsumerApi.Controllers
 	[Route("[controller]")]
 	public class ConsumeHelloWorldController : ControllerBase
 	{
-		private readonly IConnectionMultiplexer _redis;
-
 		private static readonly string[] Summaries = new[]
 		{
 			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 		};
+
 		private readonly string? _identityServerBaseUrl;
 		private readonly ILogger<ConsumeHelloWorldController> _logger;
 		private readonly string? _helloWorldApiBaseUrl;
 
 		public ConsumeHelloWorldController(
-			IConnectionMultiplexer redis,
 			IConfiguration configuration,
 			ILogger<ConsumeHelloWorldController> logger)
 		{
-			_redis = redis;
 			_identityServerBaseUrl = configuration["IdentityServer:BaseUrl"];
 			_helloWorldApiBaseUrl = configuration["HelloWorldApi:BaseUrl"];
 			_logger = logger;
@@ -37,15 +35,6 @@ namespace ConsumerApi.Controllers
 		[HttpGet(Name = "GetWeatherForecast")]
 		public async Task<HelloWorld?> Get()
 		{
-
-			var db = _redis.GetDatabase();
-
-			// Set a test key-value in Redis
-			await db.StringSetAsync("testKey", "Hello from Redis!");
-
-			// Retrieve the value to confirm it was set
-			var value = await db.StringGetAsync("testKey");
-
 			// would normally load from a secure data store
 			string rsaKey = """
 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedLockNet;
 
 namespace HelloWorldApi;
 
@@ -6,18 +7,30 @@ namespace HelloWorldApi;
 [ApiController]
 public class IdentityController : ControllerBase
 {
-    private readonly ILogger<IdentityController> _logger;
+	public const string ConfigUpdateResourceLock = "configUpdateResourceLock";
+	private readonly TimeSpan _redlockExpiration = TimeSpan.FromSeconds(30);
+	private readonly IDistributedLockFactory _distributedLockFactory;
+	private readonly ILogger<IdentityController> _logger;
 
-    public IdentityController(ILogger<IdentityController> logger)
+    public IdentityController(
+	    IDistributedLockFactory distributedLockFactory,
+	    ILogger<IdentityController> logger)
     {
-        _logger = logger;
+	    _distributedLockFactory = distributedLockFactory;
+	    _logger = logger;
     }
 
     // this action simply echoes the claims back to the client
     [HttpGet]
-    public ActionResult Get()
+    public async Task<ActionResult> Get()
     {
-	    var responseObject = new
+	    await using var redlock = await _distributedLockFactory.CreateLockAsync(
+		    ConfigUpdateResourceLock,
+		    _redlockExpiration);
+	    if (!redlock.IsAcquired)
+		    return null;
+
+		var responseObject = new
 	    {
 		    message = "Hello, World!",
 		    timestamp = DateTime.Now
