@@ -1,5 +1,4 @@
-
-using Duende.IdentityServer;
+using IdentityServerHost.Misc;
 using Microsoft.OpenApi.Models;
 using Serilog;
 

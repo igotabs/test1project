@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
 	<ImplicitUsings>enable</ImplicitUsings>
-  <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
 	<UserSecretsId>77fbc028-5234-4a75-9ebb-557c5d67f39f</UserSecretsId>
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	<DockerfileContext>..\..</DockerfileContext>
