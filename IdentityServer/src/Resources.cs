@@ -28,7 +28,7 @@ public static class Resources
             new ApiResource("resource1")
             {
                 Scopes = { "scope2" },
-                
+
                 ApiSecrets =
                 {
                     new Secret("secret".Sha256())

@@ -26,30 +26,30 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo() { Title = "HelloWorld.API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "HelloWorld.API", Version = "v1" });
 });
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
 {
-	var host = builder.Configuration.GetSetting(RedisHost);
-	var port = builder.Configuration.GetSetting<ushort>(RedisPort);
+    var host = builder.Configuration.GetSetting(RedisHost);
+    var port = builder.Configuration.GetSetting<ushort>(RedisPort);
 
-	return ConnectionMultiplexer.Connect(new ConfigurationOptions
-	{
-		EndPoints =
-		{
-			{ host, port }
-		}
-	});
+    return ConnectionMultiplexer.Connect(new ConfigurationOptions
+    {
+        EndPoints =
+        {
+            { host, port }
+        }
+    });
 });
 
 builder.Services.AddSingleton<IDistributedLockFactory>(serviceProvider =>
 {
-	var connectionMultiplexer = serviceProvider
-		.GetRequiredService<IConnectionMultiplexer>() as ConnectionMultiplexer;
-	List<RedLockMultiplexer> redLockMultiplexers = [connectionMultiplexer];
-	var redLockFactory = RedLockFactory.Create(redLockMultiplexers);
-	return redLockFactory;
+    var connectionMultiplexer = serviceProvider
+        .GetRequiredService<IConnectionMultiplexer>() as ConnectionMultiplexer;
+    List<RedLockMultiplexer> redLockMultiplexers = [connectionMultiplexer];
+    var redLockFactory = RedLockFactory.Create(redLockMultiplexers);
+    return redLockFactory;
 });
 
 builder.Services.AddSerilog();
@@ -79,8 +79,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseRouting();

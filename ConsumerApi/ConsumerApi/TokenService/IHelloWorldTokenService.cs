@@ -2,5 +2,5 @@
 
 public interface IHelloWorldTokenService
 {
-	Task<string> GetAccessTokenAsync();
+    Task<string> GetAccessTokenAsync();
 }

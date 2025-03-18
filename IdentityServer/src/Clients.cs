@@ -10,7 +10,7 @@ namespace IdentityServerHost;
 public static class Clients
 {
     public static IEnumerable<Client> List =>
-        new []
+        new[]
         {
             // JWT-based client authentication sample
             new Client
