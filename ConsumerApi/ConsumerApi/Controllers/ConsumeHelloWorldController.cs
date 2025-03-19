@@ -30,7 +30,7 @@ namespace ConsumerApi.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "GetHelloWorld")]
         public async Task<IEnumerable<HelloWorld?>> Get([FromQuery] int count = 1)
         {
             var token = await _tokenService.GetAccessTokenAsync();
