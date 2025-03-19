@@ -35,7 +35,6 @@ namespace ConsumerApi.Controllers
         {
             var token = await _tokenService.GetAccessTokenAsync();
 
-            // 2. Make multiple requests in parallel
             var results = new ConcurrentBag<HelloWorld>();
 
             await Parallel.ForEachAsync(
@@ -47,7 +46,6 @@ namespace ConsumerApi.Controllers
                 }
             );
 
-            // 3. Return the accumulated list
             return results.ToList();
         }
         async Task<HelloWorld?> CallServiceAsync(string token)
