@@ -20,7 +20,6 @@ public class HelloWorldController : ControllerBase
         _logger = logger;
     }
 
-    // this action simply echoes the claims back to the client
     [HttpGet]
     public async Task<ActionResult> Get()
     {
