@@ -1,0 +1,108 @@
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using DotNet.Testcontainers;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+using IntegrationTest.Builders;
+using IntegrationTest.Fixtures;
+using IntegrationTest.Utils;
+using Xunit.Abstractions;
+using Environment = System.Environment;
+
+
+namespace IntegrationTest.ContainerBuilders;
+
+using IContainerConfiguration = IContainerConfiguration;
+
+[ExcludeFromCodeCoverage]
+public class IdentityServerContainerBuilder //: IContainerBuilder, IOpcUaServerContainerConfiguration
+{
+	private readonly IMessageSink _logger;
+	private readonly string _network;
+
+	private IContainer? IdentityServerContainer { get; set; }
+
+	public Dictionary<string, string> Config { get; } = new()
+	{
+		{ "ASPNETCORE_ENVIRONMENT", "Development" },
+		{ "ASPNETCORE_URLS", "https://*:8081" },
+		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
+		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
+		{ "HelloWorldApi__BaseUrl", "https://helloworldapi:8081" },
+	};
+	public string IdentityServerContainerName { get; set; } = "identityserver";
+	public int ExposedPort { get; set; } = 5001;
+
+	public IdentityServerContainerBuilder(
+		IMessageSink logger,
+		string network)
+	{
+		_logger = logger;
+		_network = network;
+	}
+
+	public async Task<IContainer> BuildAsync()
+	{
+		ConfigureOpcUaServerContainer(IdentityServerHostImageBuilder.ImageName);
+		await StartOpcUaServerContainerAsync();
+
+		return IdentityServerContainer!;
+	}
+
+
+	private void ConfigureOpcUaServerContainer(string imageName)
+	{
+		_logger.Log($"Starting configuring Idenyty Server container from image '{imageName}'");
+
+		try
+		{
+			IdentityServerContainer = new ContainerBuilder()
+				.WithImage(imageName + ":latest")
+				.WithNetwork(_network)
+				.WithCreateParameterModifier(param => param.User = "root")
+				//.WithName(IdentityServerContainerName)
+				.WithEnvironment(Config)
+				.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
+				.WithPortBinding(8080, true)
+				.WithPortBinding(8081, ExposedPort)
+				.WithCleanUp(true)
+				.WithAutoRemove(true)
+				.WithLogger(ConsoleLogger.Instance)
+				.Build();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error has occurred while configuring Idenyty Server container");
+			_logger.Log(e.Message);
+			throw;
+		}
+
+		_logger.Log("Idenyty Server container has been configured successfully");
+	}
+
+	private async Task StartOpcUaServerContainerAsync()
+	{
+		try
+		{
+			_logger.Log($"Starting Idenyty Server container with '{IdentityServerContainerName}' name");
+
+			await IdentityServerContainer!.StartAsync();
+
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error has occured while starting Idenyty Server container");
+			_logger.Log(e.Message);
+
+			if (IdentityServerContainer?.State is TestcontainersStates.Running)
+			{
+				await IdentityServerContainer!.DisposeAsync();
+			}
+
+			throw;
+		}
+
+		_logger.Log("Idenyty Server container has started successfully");
+	}
+}
