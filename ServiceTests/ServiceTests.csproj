@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConsumerApi\ConsumerApi\ConsumerApi.csproj" />
+    <ProjectReference Include="..\ConsumerApi\ConsumerApi.csproj" />
     <ProjectReference Include="..\HelloWorldApi\HelloWorldApi.csproj" />
     <ProjectReference Include="..\IdentityServer\src\IdentityServerHost.csproj" />
   </ItemGroup>

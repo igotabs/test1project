@@ -27,12 +27,10 @@ services:
   consumerapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - IdentityServer__BaseUrl=https://identityserverhost:8081
       - HelloWorldApi__BaseUrl=https://helloworldapi:8081
     ports:
-      - "5004:8080"
       - "5003:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro

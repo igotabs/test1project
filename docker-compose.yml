@@ -28,7 +28,7 @@ services:
     image: ${DOCKER_REGISTRY-}consumerapi
     build:
       context: .
-      dockerfile: ConsumerApi/ConsumerApi/Dockerfile
+      dockerfile: ConsumerApi/Dockerfile
     depends_on:
       - identityserverhost
     networks:

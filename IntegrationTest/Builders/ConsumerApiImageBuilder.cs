@@ -27,7 +27,7 @@ public class ConsumerApiImageBuilder(IMessageSink logger)
         {
 			DockerImage = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
-            .WithDockerfile("ConsumerApi/ConsumerApi/Dockerfile")
+            .WithDockerfile("ConsumerApi/Dockerfile")
             .WithName(ImageName)
             .WithDeleteIfExists(true)
             .WithCleanUp(true)
