@@ -1,4 +1,5 @@
 ﻿using Docker.DotNet;
+using Docker.DotNet.Models;
 using DotNet.Testcontainers;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Images;
@@ -19,8 +20,12 @@ public class ConsumerApiImageBuilder(IMessageSink logger)
 
         ImageName = "consumerapi";
         using DockerClient? dockerClient = new DockerClientConfiguration().CreateClient();
+        IList<ImagesListResponse>? images =
+	        await dockerClient.Images.ListImagesAsync(new ImagesListParameters { All = true });
 
-        DockerImage = new ImageFromDockerfileBuilder()
+        if (images == null || !images.Any(i => i.RepoTags.Any(tag => tag.Contains(ImageName))))
+        {
+			DockerImage = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
             .WithDockerfile("ConsumerApi/ConsumerApi/Dockerfile")
             .WithName(ImageName)
@@ -39,7 +44,11 @@ public class ConsumerApiImageBuilder(IMessageSink logger)
             logger.Log(e.Message);
             throw;
         }
-
-        logger.Log("Validator image has created successfully");
+        }
+        else
+        {
+	        logger.Log("Reusing already created OPC UA Server image");
+        }
+		logger.Log("Validator image has created successfully");
     }
 }

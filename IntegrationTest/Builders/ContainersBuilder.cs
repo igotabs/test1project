@@ -52,7 +52,7 @@ namespace IntegrationTest.Builders
 
 		public async Task BuildAndStartIdentityServerAsync()
         {
-	        //await _identityServerImageBuilder.CreateIdentityServerHostFromDockerFileAsync();
+	        await _identityServerImageBuilder.CreateIdentityServerHostFromDockerFileAsync();
 	        _startedContainers.Add(
 			await _identityServerContainerBuilder.BuildAsync());
         }
@@ -60,14 +60,14 @@ namespace IntegrationTest.Builders
 
 		public async Task BuildAndStartHelloWorldAsync()
         {
-            //await _helloWorldApiImageBuilder.CreateHelloWorldApiFromDockerFileAsync();
+            await _helloWorldApiImageBuilder.CreateHelloWorldApiFromDockerFileAsync();
             _startedContainers.Add(
 			await _helloWorldApiContainerBuilder.BuildAsync());
         }
 
         public async Task BuildAndStartConsumerAsync()
         {
-            //await _consumerApiImageBuilder.CreateConsumerApiFromDockerFileAsync();
+            await _consumerApiImageBuilder.CreateConsumerApiFromDockerFileAsync();
             _startedContainers.Add(
 			await _consumerApiContainerBuilder.BuildAsync());
         }
@@ -79,19 +79,27 @@ namespace IntegrationTest.Builders
 		        await container.DisposeAsync();
 	        }
 
-	  //      await _identityServerImageBuilder.DockerImage.DeleteAsync();
-	  //      await _identityServerImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //if (_identityServerImageBuilder.DockerImage != null)
+	        //{
+		       // await _identityServerImageBuilder.DockerImage.DeleteAsync();
+		       // await _identityServerImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //}
 
 
-			//await _helloWorldApiImageBuilder.DockerImage.DeleteAsync();
-			//await _helloWorldApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //if (_helloWorldApiImageBuilder.DockerImage != null)
+	        //{
+		       // await _helloWorldApiImageBuilder.DockerImage.DeleteAsync();
+		       // await _helloWorldApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //}
 
 
-			//await _consumerApiImageBuilder.DockerImage.DeleteAsync();
-			//await _consumerApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //if (_consumerApiImageBuilder.DockerImage != null)
+	        //{
+		       // await _consumerApiImageBuilder.DockerImage.DeleteAsync();
+		       // await _consumerApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+	        //}
 
-
-            GC.SuppressFinalize(this);
+	        GC.SuppressFinalize(this);
         }
     }
 }

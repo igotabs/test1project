@@ -1,4 +1,5 @@
 ﻿using Docker.DotNet;
+using Docker.DotNet.Models;
 using DotNet.Testcontainers;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Images;
@@ -19,27 +20,37 @@ public class HelloWorldApiImageBuilder(IMessageSink logger)
 
         ImageName = "helloworldapi";
         using DockerClient? dockerClient = new DockerClientConfiguration().CreateClient();
+        IList<ImagesListResponse>? images =
+	        await dockerClient.Images.ListImagesAsync(new ImagesListParameters { All = true });
 
-        DockerImage = new ImageFromDockerfileBuilder()
-            .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
-            .WithDockerfile("HelloWorldApi/Dockerfile")
-            .WithName(ImageName)
-            .WithDeleteIfExists(false)
-            .WithCleanUp(false)
-            .WithLogger(ConsoleLogger.Instance)
-            .Build();
+		if (images == null || !images.Any(i => i.RepoTags.Any(tag => tag.Contains(ImageName))))
+		{
+			DockerImage = new ImageFromDockerfileBuilder()
+				.WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
+				.WithDockerfile("HelloWorldApi/Dockerfile")
+				.WithName(ImageName)
+				.WithDeleteIfExists(false)
+				.WithCleanUp(false)
+				.WithLogger(ConsoleLogger.Instance)
+				.Build();
 
-        try
-        {
-            await DockerImage.CreateAsync();
-        }
-        catch (Exception e)
-        {
-            logger.Log("Validator image creation has failed");
-            logger.Log(e.Message);
-            throw;
-        }
+			try
+			{
+				await DockerImage.CreateAsync();
+			}
+			catch (Exception e)
+			{
+				logger.Log("Validator image creation has failed");
+				logger.Log(e.Message);
+				throw;
+			}
+		}
+		else
+		{
+			logger.Log("Reusing already created OPC UA Server image");
+		}
 
-        logger.Log("Validator image has created successfully");
+
+		logger.Log("Validator image has created successfully");
     }
 }
