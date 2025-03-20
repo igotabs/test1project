@@ -26,7 +26,7 @@ public static class NetworkResolverUtils
         {
             await new NetworkBuilder()
                 .WithCleanUp(true)
-                .WithDriver(NetworkDriver.Bridge)
+                //.WithDriver(NetworkDriver.Bridge)
                 .WithName(networkName)
                 .Build()
                 .CreateAsync();

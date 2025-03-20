@@ -26,10 +26,11 @@ public class HelloWorldApiContainerBuilder //: IContainerBuilder, IOpcUaServerCo
 	public Dictionary<string, string> Config { get; } = new()
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
-		{ "ASPNETCORE_URLS", "https://*:8081" },
+		{"ASPNETCORE_URLS", "http://*:8081"},
 		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
-		{ "HelloWorldApi__BaseUrl", "https://helloworldapi:8081" },
+		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
+		{ "Redis__Host", "redis" },//Redis__Host=redis
 	};
 	public string HelloWorldApiContainerName { get; set; } = "helloworldapi";
 	public int ExposedPort { get; set; } = 5002;
@@ -62,13 +63,14 @@ public class HelloWorldApiContainerBuilder //: IContainerBuilder, IOpcUaServerCo
 				.WithNetwork(_network)
 				.WithCreateParameterModifier(param => param.User = "root")
 				.WithName(HelloWorldApiContainerName)
+				.WithNetworkAliases(new[] { "helloworldapi" })
 				.WithEnvironment(Config)
-				.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
-				.WithPortBinding(8080, true)
-				.WithPortBinding(8081, ExposedPort)
-				.WithCleanUp(true)
-				.WithAutoRemove(true)
-				.WithLogger(ConsoleLogger.Instance)
+				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
+				//.WithPortBinding(8080, true)
+				.WithPortBinding(ExposedPort, 8081)
+				.WithCleanUp(false)
+				.WithAutoRemove(false)
+				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)

@@ -11,7 +11,7 @@ namespace IntegrationTest.Builders;
 public class ConsumerApiImageBuilder(IMessageSink logger)
 {
     public IFutureDockerImage? DockerImage { get; private set; }
-	public static string ImageName { get;  set; }
+	public static string ImageName { get;  set; } = "consumerapi";
 
 	public async Task CreateConsumerApiFromDockerFileAsync()
     {
@@ -22,7 +22,7 @@ public class ConsumerApiImageBuilder(IMessageSink logger)
 
         DockerImage = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
-            .WithDockerfile("ConsumerApi/Dockerfile")
+            .WithDockerfile("ConsumerApi/ConsumerApi/Dockerfile")
             .WithName(ImageName)
             .WithDeleteIfExists(true)
             .WithCleanUp(true)

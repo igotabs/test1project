@@ -11,7 +11,7 @@ namespace IntegrationTest.Builders;
 public class IdentityServerHostImageBuilder(IMessageSink logger)
 {
     public IFutureDockerImage? DockerImage { get; private set; }
-	public static string ImageName { get; set; }
+	public static string ImageName { get; set; } = "identityserverhost";
 
 	public async Task CreateIdentityServerHostFromDockerFileAsync()
     {

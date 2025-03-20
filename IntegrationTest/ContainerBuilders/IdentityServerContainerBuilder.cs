@@ -26,10 +26,13 @@ public class IdentityServerContainerBuilder //: IContainerBuilder, IOpcUaServerC
 	public Dictionary<string, string> Config { get; } = new()
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
-		{ "ASPNETCORE_URLS", "https://*:8081" },
-		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
+		{ "ASPNETCORE_HTTP_PORTS", "8080" },
+		{ "ASPNETCORE_HTTPS_PORTS", "8081" },
+		//      - ASPNETCORE_HTTP_PORTS=8080
+		// - ASPNETCORE_HTTPS_PORTS=8081
+		//{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
-		{ "HelloWorldApi__BaseUrl", "https://helloworldapi:8081" },
+		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 	};
 	public string IdentityServerContainerName { get; set; } = "identityserver";
 	public int ExposedPort { get; set; } = 5001;
@@ -54,21 +57,31 @@ public class IdentityServerContainerBuilder //: IContainerBuilder, IOpcUaServerC
 	private void ConfigureOpcUaServerContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Idenyty Server container from image '{imageName}'");
+		var appData = Environment.GetEnvironmentVariable("APPDATA");
 
 		try
 		{
 			IdentityServerContainer = new ContainerBuilder()
 				.WithImage(imageName + ":latest")
 				.WithNetwork(_network)
-				.WithCreateParameterModifier(param => param.User = "root")
-				//.WithName(IdentityServerContainerName)
+				//.WithCreateParameterModifier(param => param.User = "root")
+				.WithName(IdentityServerContainerName)
+				.WithNetworkAliases(new[] { "identityserverhost" })
 				.WithEnvironment(Config)
-				.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
-				.WithPortBinding(8080, true)
-				.WithPortBinding(8081, ExposedPort)
+				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
+				.WithPortBinding(56205, 8080)
+				.WithPortBinding(ExposedPort,8081)
+				.WithBindMount(
+					Path.Combine(appData, "Microsoft", "UserSecrets"),
+					"/home/app/.microsoft/usersecrets",
+					AccessMode.ReadOnly)
+				.WithBindMount(
+					Path.Combine(appData, "ASP.NET", "Https"),
+					"/home/app/.aspnet/https",
+					AccessMode.ReadOnly)
 				.WithCleanUp(true)
 				.WithAutoRemove(true)
-				.WithLogger(ConsoleLogger.Instance)
+				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)

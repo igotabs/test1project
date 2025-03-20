@@ -26,10 +26,11 @@ public class ConsumerApiContainerBuilder //: IContainerBuilder, IOpcUaServerCont
 	public Dictionary<string, string> Config { get; } = new()
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
-		{ "ASPNETCORE_URLS", "https://*:8081" },
-		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
+		{"ASPNETCORE_URLS", "http://*:8081"},
+		//{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
+
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
-		{ "HelloWorldApi__BaseUrl", "https://helloworldapi:8081" },
+		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 	};
 	public string ConsumerApiContainerName { get; set; } = "consumerapi";
 	public int ExposedPort { get; set; } = 5003;
@@ -60,15 +61,15 @@ public class ConsumerApiContainerBuilder //: IContainerBuilder, IOpcUaServerCont
 			ConsumerContainer = new ContainerBuilder()
 				.WithImage(imageName + ":latest")
 				.WithNetwork(_network)
-				.WithCreateParameterModifier(param => param.User = "root")
+				//.WithCreateParameterModifier(param => param.User = "root")
 				.WithName(ConsumerApiContainerName)
 				.WithEnvironment(Config)
-				.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
-				.WithPortBinding(8080, true)
-				.WithPortBinding(8081, ExposedPort)
-				.WithCleanUp(true)
-				.WithAutoRemove(true)
-				.WithLogger(ConsoleLogger.Instance)
+				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
+				//.WithPortBinding(8080, true)
+				.WithPortBinding(ExposedPort, 8081)
+				.WithCleanUp(false)
+				.WithAutoRemove(false)
+				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)

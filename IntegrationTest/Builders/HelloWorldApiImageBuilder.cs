@@ -11,7 +11,7 @@ namespace IntegrationTest.Builders;
 public class HelloWorldApiImageBuilder(IMessageSink logger)
 {
     public IFutureDockerImage? DockerImage { get; private set; }
-	public static string ImageName { get; set; }
+	public static string ImageName { get; set; } = "helloworldapi";
 
 	public async Task CreateHelloWorldApiFromDockerFileAsync()
     {
@@ -24,8 +24,8 @@ public class HelloWorldApiImageBuilder(IMessageSink logger)
             .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
             .WithDockerfile("HelloWorldApi/Dockerfile")
             .WithName(ImageName)
-            .WithDeleteIfExists(true)
-            .WithCleanUp(true)
+            .WithDeleteIfExists(false)
+            .WithCleanUp(false)
             .WithLogger(ConsoleLogger.Instance)
             .Build();
 

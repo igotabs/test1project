@@ -52,7 +52,7 @@ namespace IntegrationTest.Builders
 
 		public async Task BuildAndStartIdentityServerAsync()
         {
-	        await _identityServerImageBuilder.CreateIdentityServerHostFromDockerFileAsync();
+	        //await _identityServerImageBuilder.CreateIdentityServerHostFromDockerFileAsync();
 	        _startedContainers.Add(
 			await _identityServerContainerBuilder.BuildAsync());
         }
@@ -60,14 +60,14 @@ namespace IntegrationTest.Builders
 
 		public async Task BuildAndStartHelloWorldAsync()
         {
-            await _helloWorldApiImageBuilder.CreateHelloWorldApiFromDockerFileAsync();
+            //await _helloWorldApiImageBuilder.CreateHelloWorldApiFromDockerFileAsync();
             _startedContainers.Add(
 			await _helloWorldApiContainerBuilder.BuildAsync());
         }
 
         public async Task BuildAndStartConsumerAsync()
         {
-            await _consumerApiImageBuilder.CreateConsumerApiFromDockerFileAsync();
+            //await _consumerApiImageBuilder.CreateConsumerApiFromDockerFileAsync();
             _startedContainers.Add(
 			await _consumerApiContainerBuilder.BuildAsync());
         }

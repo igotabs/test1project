@@ -54,7 +54,8 @@ public class RedisContainerBuilder //: IContainerBuilder, IOpcUaServerContainerC
 		{
 			RedisContainer = new RedisBuilder()
 				.WithImage("redis/redis-stack-server:latest")
-				//.WithName(RedisContainerName)
+				.WithName(RedisContainerName)
+				.WithNetworkAliases(new[] { "redis" })
 				.WithNetwork(_network)
 				.WithPortBinding(6379, ExposedPort)
 				.Build();
