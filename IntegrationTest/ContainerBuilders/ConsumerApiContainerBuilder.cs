@@ -16,7 +16,7 @@ namespace IntegrationTest.ContainerBuilders;
 using IContainerConfiguration = IContainerConfiguration;
 
 [ExcludeFromCodeCoverage]
-public class ConsumerApiContainerBuilder //: IContainerBuilder, IOpcUaServerContainerConfiguration
+public class ConsumerApiContainerBuilder
 {
 	private readonly IMessageSink _logger;
 	private readonly string _network;
@@ -27,7 +27,6 @@ public class ConsumerApiContainerBuilder //: IContainerBuilder, IOpcUaServerCont
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
 		{"ASPNETCORE_URLS", "http://*:8081"},
-		//{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },

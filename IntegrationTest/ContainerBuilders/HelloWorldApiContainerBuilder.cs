@@ -8,15 +8,13 @@ using IntegrationTest.Builders;
 using IntegrationTest.Fixtures;
 using IntegrationTest.Utils;
 using Xunit.Abstractions;
-using Environment = System.Environment;
 
 
 namespace IntegrationTest.ContainerBuilders;
 
-using IContainerConfiguration = IContainerConfiguration;
 
 [ExcludeFromCodeCoverage]
-public class HelloWorldApiContainerBuilder //: IContainerBuilder, IOpcUaServerContainerConfiguration
+public class HelloWorldApiContainerBuilder
 {
 	private readonly IMessageSink _logger;
 	private readonly string _network;
@@ -30,7 +28,7 @@ public class HelloWorldApiContainerBuilder //: IContainerBuilder, IOpcUaServerCo
 		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
-		{ "Redis__Host", "redis" },//Redis__Host=redis
+		{ "Redis__Host", "redis" }
 	};
 	public string HelloWorldApiContainerName { get; set; } = "helloworldapi";
 	public int ExposedPort { get; set; } = 5002;
