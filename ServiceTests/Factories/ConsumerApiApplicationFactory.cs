@@ -10,24 +10,45 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ServiceTests.Factories
 {
-    public class ConsumerApiApplicationFactory() : WebApplicationFactory<Program>
-    {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            
-            builder.ConfigureAppConfiguration((context, configBuilder) =>
-            {
+	public class ConsumerApiApplicationFactory : WebApplicationFactory<Program>
+	{
+		//make constructor
+		public ConsumerApiApplicationFactory(HttpClient externalIdentityServerClient, HttpClient externalHelloWorldClient)
+		{
+			this.externalIdentityServerClient = externalIdentityServerClient;
+			this.externalHelloWorldClient = externalHelloWorldClient;
+		}
+
+		public HttpClient externalIdentityServerClient { get; set; }
+		public HttpClient externalHelloWorldClient { get; set; }
+
+		protected override void ConfigureWebHost(IWebHostBuilder builder)
+		{
+
+			builder.ConfigureTestServices(services =>
+			{
+				// Remove existing registrations
+				services.RemoveAll(typeof(IdentityServerClient));
+				services.RemoveAll(typeof(HelloWorldApiClient));
+
+				// Register replacements with your external HttpClients
+				services.AddSingleton(new IdentityServerClient(externalIdentityServerClient));
+				services.AddSingleton(new HelloWorldApiClient(externalHelloWorldClient));
+			});
+
+			builder.ConfigureAppConfiguration((context, configBuilder) =>
+{
 
 
-                var inMemorySettingsStrings = new Dictionary<string, string?>
-                {
-                    //[PlatformApiKafkaBootstrapServersSettingName] = BootstrapServers
-                };
+	var inMemorySettingsStrings = new Dictionary<string, string?>
+	{
+		//[PlatformApiKafkaBootstrapServersSettingName] = BootstrapServers
+	};
 
-                configBuilder.AddInMemoryCollection(inMemorySettingsStrings);
-            });
-        }
+	configBuilder.AddInMemoryCollection(inMemorySettingsStrings);
+});
+		}
 
-    }
+	}
 
 }

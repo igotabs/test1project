@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using HelloWorldApi.Tools;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 using RedLockNet;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
@@ -30,7 +32,7 @@ public class Program
 			.CreateLogger();
 
 		var builder = WebApplication.CreateBuilder(args);
-
+		var s= builder.Configuration["IdentityServer:BaseUrl"];
 		// Add services to the container.
 		builder.Services.AddSwaggerGen(c =>
 		{
@@ -65,7 +67,17 @@ public class Program
 		builder.Services.AddControllers();
 
 		// this API will accept any access token from the authority
-		string identityServerAddress = builder.Configuration["IdentityServer:BaseUrl"];
+		bool isTest = false;
+		var testEnv = Environment.GetEnvironmentVariable("Istest");
+		if (!string.IsNullOrEmpty(testEnv))
+		{
+			bool.TryParse(testEnv, out isTest);
+		}
+
+		string identityServerAddress = !isTest
+			? builder.Configuration["IdentityServer:BaseUrl"]
+			: "http://localhost";
+		var i = 1;
 		builder.Services.AddAuthentication("token")
 			.AddJwtBearer("token", options =>
 			{
@@ -81,9 +93,39 @@ public class Program
 
 				options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 				options.MapInboundClaims = false;
+
+				options.Events = new JwtBearerEvents
+				{
+					OnMessageReceived = context =>
+					{
+						// Log or inspect the incoming token here
+						Console.WriteLine("OnMessageReceived invoked.");
+						return Task.CompletedTask;
+					},
+					OnTokenValidated = context =>
+					{
+						// Log or inspect the validated token details
+						Console.WriteLine("OnTokenValidated invoked.");
+						return Task.CompletedTask;
+					},
+					OnAuthenticationFailed = context =>
+					{
+						// Log the error details if authentication fails
+						Console.WriteLine("OnAuthenticationFailed invoked: " + context.Exception.Message);
+						return Task.CompletedTask;
+					},
+					OnChallenge = context =>
+					{
+						// Log the challenge response details
+						Console.WriteLine("OnChallenge invoked.");
+						return Task.CompletedTask;
+					}
+				};
 			});
 
 		var app = builder.Build();
+
+		app.UseMiddleware<RequestInterceptorMiddleware>();
 
 		if (app.Environment.IsDevelopment())
 		{

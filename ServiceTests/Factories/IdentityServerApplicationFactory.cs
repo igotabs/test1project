@@ -15,13 +15,13 @@ namespace ServiceTests.Factories
     {
 		protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-	        builder.ConfigureKestrel(serverOptions =>
-	        {
-		        serverOptions.Listen(IPAddress.Loopback, 5001, listenOptions =>
-		        {
-			        listenOptions.UseHttps(); // This enables HTTPS on port 5001.
-		        });
-	        });
+	        //builder.ConfigureKestrel(serverOptions =>
+	        //{
+		       // serverOptions.Listen(IPAddress.Loopback, 5001, listenOptions =>
+		       // {
+			      //  listenOptions.UseHttps(); // This enables HTTPS on port 5001.
+		       // });
+	        //});
 
 			builder.ConfigureAppConfiguration((context, configBuilder) =>
             {
