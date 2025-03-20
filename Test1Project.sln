@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{457FBC74-5D39-480F-ACB5-3768196EB31A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTests", "..\ServiceTests\ServiceTests.csproj", "{EB2183F8-0CE8-46C7-8F57-6D4AF503488E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTests", "ServiceTests\ServiceTests.csproj", "{EB2183F8-0CE8-46C7-8F57-6D4AF503488E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
