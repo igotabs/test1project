@@ -1,3 +1,4 @@
+using ConsumerApi.HttpClients;
 using ConsumerApi.TokenService;
 using Microsoft.OpenApi.Models;
 

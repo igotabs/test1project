@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ConsumerApi.HttpClients;
 using ConsumerApi.Models;
 using ConsumerApi.TokenService;
 using ConsumerApi.Tools;
@@ -13,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace ConsumerApi.Controllers
 {
-    [ApiController]
+	[ApiController]
     [Route("[controller]")]
     public class ConsumeHelloWorldController : ControllerBase
     {

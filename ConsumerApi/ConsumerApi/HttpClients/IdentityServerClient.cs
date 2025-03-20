@@ -1,4 +1,4 @@
-﻿namespace ConsumerApi
+﻿namespace ConsumerApi.HttpClients
 {
 	public class IdentityServerClient
 	{

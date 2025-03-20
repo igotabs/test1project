@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ConsumerApi.HttpClients;
 using ConsumerApi.Tools;
 using Duende.IdentityModel;
 using Duende.IdentityModel.Client;

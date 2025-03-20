@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using ConsumerApi;
+using ConsumerApi.HttpClients;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;

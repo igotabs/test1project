@@ -1,5 +1,4 @@
-﻿
-namespace ConsumerApi
+﻿namespace ConsumerApi.HttpClients
 {
 	public class HelloWorldApiClient
 	{
@@ -7,7 +6,7 @@ namespace ConsumerApi
 
 		public HelloWorldApiClient(HttpClient client)
 		{
-			this.Client = client;
+			Client = client;
 		}
 	}
 }
