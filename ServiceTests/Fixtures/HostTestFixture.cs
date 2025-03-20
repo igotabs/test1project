@@ -1,5 +1,6 @@
 using ServiceTests.Factories;
 using ServiceTests.Utils;
+using System.Net.Http;
 
 namespace ServiceTests.Fixtures;
 
@@ -18,15 +19,24 @@ public class HostTestFixture : IAsyncLifetime
 		RedisAddress = $"{_redisContainerManager.Hostname}:{_redisContainerManager.Port}";
 
 		IdentityServerApplicationFactory = new IdentityServerApplicationFactory();
-		IdentityServerApplicationFactory.CreateClient();
+		ConsumerClient3 = IdentityServerApplicationFactory.CreateClient();
 
 		HelloWorldApiApiApplicationFactory = new HelloWorldApiApiApplicationFactory();
-		HelloWorldApiApiApplicationFactory.CreateClient();
+		ConsumerClient2 = HelloWorldApiApiApplicationFactory.CreateClient();
 
 		ConsumerApiApplicationFactory = new ConsumerApiApplicationFactory();
 		ConsumerClient = ConsumerApiApplicationFactory.CreateClient();
 
+		//httpClient.BaseAddress = new Uri("http://localhost:5003/");
+		//warm-up
+		//await Task.Delay(20000);
+		var response = await ConsumerClient.GetStringAsync($"ConsumeHelloWorld?count=1");
+
 	}
+
+	public HttpClient ConsumerClient3 { get; set; }
+
+	public HttpClient ConsumerClient2 { get; set; }
 
 	public HttpClient ConsumerClient { get; set; }
 

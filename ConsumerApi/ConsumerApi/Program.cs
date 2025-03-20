@@ -21,7 +21,47 @@ public class Program
 		});
 
 		builder.Services.AddMemoryCache();
+
+		builder.Services.AddSingleton<IdentityServerClient>(sp =>
+		{
+			var configuration = sp.GetRequiredService<IConfiguration>();
+			var baseUrl = configuration["IdentityServer:BaseUrl"];
+			var handler = new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+			};
+
+			var client = new HttpClient(handler)
+			{
+				BaseAddress = new Uri(baseUrl)
+			};
+
+			return new IdentityServerClient(client);
+		});
+
+		builder.Services.AddSingleton<HelloWorldApiClient>(sp =>
+		{
+			var configuration = sp.GetRequiredService<IConfiguration>();
+			var baseUrl = configuration["HelloWorldApi:BaseUrl"];
+			var handler = new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+			};
+
+			var client = new HttpClient(handler)
+			{
+				BaseAddress = new Uri(baseUrl)
+			};
+
+			return new HelloWorldApiClient(client);
+		});
+
+
+
 		builder.Services.AddSingleton<IHelloWorldTokenService, HelloWorldTokenService>();
+
+
+
 
 		var app = builder.Build();
 

@@ -21,7 +21,7 @@ public class RedisContainerManager
     {
         var redisContainer = new RedisBuilder()
             .WithImage("redis/redis-stack-server:latest")
-            .WithPortBinding(6379, true)
+            .WithPortBinding(6379, 6379)
             .Build();
 
         await redisContainer.StartAsync();

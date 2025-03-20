@@ -11,6 +11,7 @@ namespace ConsumerApi.TokenService;
 public class HelloWorldTokenService : IHelloWorldTokenService
 {
     private readonly IMemoryCache _cache;
+    private readonly IdentityServerClient _identityServerClient;
 
     private readonly string _identityServerBaseUrl;
     // Add additional dependencies such as configuration if needed
@@ -18,10 +19,12 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 
     public HelloWorldTokenService(
         IMemoryCache cache,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IdentityServerClient identityServerClient)
     {
         _identityServerBaseUrl = configuration["IdentityServer:BaseUrl"] ?? throw new ArgumentNullException(nameof(_identityServerBaseUrl));
         _cache = cache;
+        _identityServerClient = identityServerClient;
     }
 
     public async Task<string> GetAccessTokenAsync()
@@ -45,21 +48,21 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 
     async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
     {
-        var httpClientHandler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-            {
-                // Return 'true' to allow any cert
-                return true;
-            }
-        };
-        var client = new HttpClient(httpClientHandler);
+        //var httpClientHandler = new HttpClientHandler
+        //{
+        //    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+        //    {
+        //        // Return 'true' to allow any cert
+        //        return true;
+        //    }
+        //};
+        //var client = new HttpClient(httpClientHandler);
 
-        var disco = await client.GetDiscoveryDocumentAsync(_identityServerBaseUrl);
+        var disco = await _identityServerClient.HttpClient.GetDiscoveryDocumentAsync();
         if (disco.IsError) throw new Exception(disco.Error);
 
         var clientToken = CreateClientToken(signingCredentials, Common.Constants.ClientId, disco.Issuer!);
-        var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+        var response = await _identityServerClient.HttpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
         {
             Address = disco.TokenEndpoint,
 
