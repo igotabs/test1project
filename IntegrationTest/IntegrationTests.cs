@@ -5,13 +5,15 @@ using ConsumerApi.Models;
 
 namespace IntegrationTest
 {
-	public class UnitTest1
+	public class IntegrationTests
 	{
 		[Fact]
-		public async Task Test1()
+		public async Task CallConsumeHelloWorldWithCountOne()
 		{
 			var httpClient = new HttpClient();
 			httpClient.BaseAddress = new Uri("http://localhost:5003/");
+			//warm-up
+			await Task.Delay(10000);
 			var response = await httpClient.GetStringAsync($"ConsumeHelloWorld?count=1");
 			var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
