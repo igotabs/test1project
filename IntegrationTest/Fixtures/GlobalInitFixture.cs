@@ -36,8 +36,8 @@ public class GlobalInitFixture : XunitTestFramework, IDisposable
 	    ContainersBuilder = new ContainersBuilder(_logger);
 
 
-	    ContainersBuilder.BuildAndStartRedisAsync().GetAwaiter().GetResult();
-		    ContainersBuilder.BuildAndStartIdentityServerAsync().GetAwaiter().GetResult();
+		ContainersBuilder.BuildAndStartRedisAsync().GetAwaiter().GetResult();
+		ContainersBuilder.BuildAndStartIdentityServerAsync().GetAwaiter().GetResult();
 		ContainersBuilder.BuildAndStartHelloWorldAsync().GetAwaiter().GetResult();
 		ContainersBuilder.BuildAndStartConsumerAsync().GetAwaiter().GetResult();
 

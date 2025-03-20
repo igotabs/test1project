@@ -67,8 +67,8 @@ public class ConsumerApiContainerBuilder //: IContainerBuilder, IOpcUaServerCont
 				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
 				//.WithPortBinding(8080, true)
 				.WithPortBinding(ExposedPort, 8081)
-				.WithCleanUp(false)
-				.WithAutoRemove(false)
+				.WithCleanUp(true)
+				.WithAutoRemove(true)
 				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}

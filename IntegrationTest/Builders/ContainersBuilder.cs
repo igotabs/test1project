@@ -79,16 +79,16 @@ namespace IntegrationTest.Builders
 		        await container.DisposeAsync();
 	        }
 
-	        await _identityServerImageBuilder.DockerImage.DeleteAsync();
-	        await _identityServerImageBuilder.DockerImage.DisposeAsync().AsTask();
+	  //      await _identityServerImageBuilder.DockerImage.DeleteAsync();
+	  //      await _identityServerImageBuilder.DockerImage.DisposeAsync().AsTask();
 
 
-			await _helloWorldApiImageBuilder.DockerImage.DeleteAsync();
-			await _helloWorldApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+			//await _helloWorldApiImageBuilder.DockerImage.DeleteAsync();
+			//await _helloWorldApiImageBuilder.DockerImage.DisposeAsync().AsTask();
 
 
-			await _consumerApiImageBuilder.DockerImage.DeleteAsync();
-			await _consumerApiImageBuilder.DockerImage.DisposeAsync().AsTask();
+			//await _consumerApiImageBuilder.DockerImage.DeleteAsync();
+			//await _consumerApiImageBuilder.DockerImage.DisposeAsync().AsTask();
 
 
             GC.SuppressFinalize(this);
