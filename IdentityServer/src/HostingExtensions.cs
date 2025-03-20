@@ -1,4 +1,3 @@
-using HelloWorldApi.Tools;
 using IdentityServerHost.Misc;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -42,7 +41,6 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-	    app.UseMiddleware<RequestInterceptorMiddleware>();
 		app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())

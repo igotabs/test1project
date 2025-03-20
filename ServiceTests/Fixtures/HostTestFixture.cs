@@ -7,19 +7,26 @@ namespace ServiceTests.Fixtures;
 
 public class HostTestFixture : IAsyncLifetime
 {
-	private RedisContainerManager _redisContainerManager;
+	public required RedisContainerManager RedisContainerManager { get; set; }
+	public required HttpClient IdentityClient { get; set; }
 
-	public HostTestFixture()
-	{
-	}
+	public required HttpClient HelloWorldClient { get; set; }
+
+	public required HttpClient ConsumerClient { get; set; }
+
+	public required string RedisAddress { get; set; }
+	public IdentityServerApplicationFactory? IdentityServerApplicationFactory { get; private set; }
+	public HelloWorldApiApiApplicationFactory? HelloWorldApiApiApplicationFactory { get; private set; }
+	public ConsumerApiApplicationFactory? ConsumerApiApplicationFactory { get; private set; }
+
 
 	public async Task InitializeAsync()
 	{
-		Environment.SetEnvironmentVariable("Istest", "true");
+		Environment.SetEnvironmentVariable("IsTest", "true");
 
-		_redisContainerManager = await RedisContainerManager.CreateAndStartRedisContainerAsync();
+		RedisContainerManager = await RedisContainerManager.CreateAndStartRedisContainerAsync();
 
-		RedisAddress = $"{_redisContainerManager.Hostname}:{_redisContainerManager.Port}";
+		RedisAddress = $"{RedisContainerManager.Hostname}:{RedisContainerManager.Port}";
 
 		IdentityServerApplicationFactory = new IdentityServerApplicationFactory();
 		var options = new WebApplicationFactoryClientOptions
@@ -33,33 +40,23 @@ public class HostTestFixture : IAsyncLifetime
 
 		ConsumerApiApplicationFactory = new ConsumerApiApplicationFactory(IdentityClient, HelloWorldClient);
 
-		ConsumerApiApplicationFactory.externalHelloWorldClient = HelloWorldClient;
-		ConsumerApiApplicationFactory.externalHelloWorldClient = HelloWorldClient;
 		ConsumerClient = ConsumerApiApplicationFactory.CreateClient();
-
-		//httpClient.BaseAddress = new Uri("http://localhost:5003/");
-		//warm-up
-		//await Task.Delay(20000);
-		//var response = await ConsumerClient.GetStringAsync($"ConsumeHelloWorld?count=1");
 
 	}
 
-	public HttpClient IdentityClient { get; set; }
-
-	public HttpClient HelloWorldClient { get; set; }
-
-	public HttpClient ConsumerClient { get; set; }
-
-	public string RedisAddress { get; set; }
-	public IdentityServerApplicationFactory IdentityServerApplicationFactory { get; private set; }
-	public HelloWorldApiApiApplicationFactory HelloWorldApiApiApplicationFactory { get; private set; }
-	public ConsumerApiApplicationFactory ConsumerApiApplicationFactory { get; private set; }
-
 	public async Task DisposeAsync()
 	{
-		await IdentityServerApplicationFactory.DisposeAsync();
-		await HelloWorldApiApiApplicationFactory.DisposeAsync();
-		await ConsumerApiApplicationFactory.DisposeAsync();
-
+		if (IdentityServerApplicationFactory != null)
+		{
+			await IdentityServerApplicationFactory.DisposeAsync();
+		}
+		if (HelloWorldApiApiApplicationFactory != null)
+		{
+			await HelloWorldApiApiApplicationFactory.DisposeAsync();
+		}
+		if (ConsumerApiApplicationFactory != null)
+		{
+			await ConsumerApiApplicationFactory.DisposeAsync();
+		}
 	}
 } 

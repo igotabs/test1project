@@ -26,7 +26,7 @@ namespace ServiceTests.Factories
 			{
 				services.Configure<JwtBearerOptions>("token", options =>
 				{
-					// Replace the default Backchannel with your custom HttpClient.
+					// Replace the default Backchannel with custom HttpClient.
 					options.Backchannel = externalIdentityServerClient;
 				});
 			});

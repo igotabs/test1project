@@ -53,18 +53,6 @@ namespace ConsumerApi.Controllers
         }
         async Task<HelloWorld?> CallServiceAsync(string token)
         {
-			//var httpClientHandler = new HttpClientHandler
-			//{
-			//    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-			//    {
-			//        // Return 'true' to allow any cert
-			//        return true;
-			//    }
-			//};
-			//var httpClient = new HttpClient(httpClientHandler);
-			//httpClient.BaseAddress = new Uri(_helloWorldApiBaseUrl!);
-
-
 			_helloWorldApiClient.Client.SetBearerToken(token);
             var response = await _helloWorldApiClient.Client.GetStringAsync($"HelloWorld");
 

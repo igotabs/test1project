@@ -17,10 +17,9 @@ namespace IntegrationTest.ContainerBuilders;
 using IContainerConfiguration = IContainerConfiguration;
 
 [ExcludeFromCodeCoverage]
-public class RedisContainerBuilder //: IContainerBuilder, IOpcUaServerContainerConfiguration
+public class RedisContainerBuilder
 {
-	private readonly IMessageSink logger,
-		_logger;
+	private readonly IMessageSink _logger;
 	private readonly string _network;
 
 	private IContainer? RedisContainer { get; set; }

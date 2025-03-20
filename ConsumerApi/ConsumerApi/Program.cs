@@ -56,12 +56,7 @@ public class Program
 			return new HelloWorldApiClient(client);
 		});
 
-
-
 		builder.Services.AddSingleton<IHelloWorldTokenService, HelloWorldTokenService>();
-
-
-
 
 		var app = builder.Build();
 

@@ -14,8 +14,6 @@ public class HelloWorldTokenService : IHelloWorldTokenService
     private readonly IdentityServerClient _identityServerClient;
 
     private readonly string _identityServerBaseUrl;
-    // Add additional dependencies such as configuration if needed
-    // For instance: IConfiguration, signing credentials, discovery document, etc.
 
     public HelloWorldTokenService(
         IMemoryCache cache,
@@ -48,16 +46,6 @@ public class HelloWorldTokenService : IHelloWorldTokenService
 
     async Task<TokenResponse> RequestTokenAsync(SigningCredentials signingCredentials)
     {
-        //var httpClientHandler = new HttpClientHandler
-        //{
-        //    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-        //    {
-        //        // Return 'true' to allow any cert
-        //        return true;
-        //    }
-        //};
-        //var client = new HttpClient(httpClientHandler);
-
         var disco = await _identityServerClient.HttpClient.GetDiscoveryDocumentAsync();
         if (disco.IsError) throw new Exception(disco.Error);
 

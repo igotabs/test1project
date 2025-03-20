@@ -16,7 +16,7 @@ namespace IntegrationTest.ContainerBuilders;
 using IContainerConfiguration = IContainerConfiguration;
 
 [ExcludeFromCodeCoverage]
-public class IdentityServerContainerBuilder //: IContainerBuilder, IOpcUaServerContainerConfiguration
+public class IdentityServerContainerBuilder
 {
 	private readonly IMessageSink _logger;
 	private readonly string _network;
