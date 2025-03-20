@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsumerApi\ConsumerApi.csproj" />
     <ProjectReference Include="..\HelloWorldApi\HelloWorldApi.csproj" />
-    <ProjectReference Include="..\IdentityServer\src\IdentityServerHost.csproj" />
+    <ProjectReference Include="..\IdentityServer\IdentityServerHost.csproj" />
   </ItemGroup>
 
   <ItemGroup>

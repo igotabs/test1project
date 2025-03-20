@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorldApi", "HelloWorld
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsumerApi", "ConsumerApi\ConsumerApi.csproj", "{B787BA3E-D7C4-475A-B30F-3D1E3F432337}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServerHost", "IdentityServer\src\IdentityServerHost.csproj", "{5F154B1E-511A-468D-A08F-1793CB6D774E}"
-EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{7A18788D-4276-430B-B3CB-ADF1D8033CDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{7833C704-38ED-4C9B-A11D-AA6310C55AA4}"
@@ -16,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{457FBC74-5D39-480F-ACB5-3768196EB31A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTests", "ServiceTests\ServiceTests.csproj", "{1512605C-96C9-44CE-9C64-0453423E5D4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServerHost", "IdentityServer\IdentityServerHost.csproj", "{14AA039C-5E30-4155-A201-7B56174E80D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{B787BA3E-D7C4-475A-B30F-3D1E3F432337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B787BA3E-D7C4-475A-B30F-3D1E3F432337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B787BA3E-D7C4-475A-B30F-3D1E3F432337}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F154B1E-511A-468D-A08F-1793CB6D774E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A18788D-4276-430B-B3CB-ADF1D8033CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{1512605C-96C9-44CE-9C64-0453423E5D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1512605C-96C9-44CE-9C64-0453423E5D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1512605C-96C9-44CE-9C64-0453423E5D4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14AA039C-5E30-4155-A201-7B56174E80D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14AA039C-5E30-4155-A201-7B56174E80D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14AA039C-5E30-4155-A201-7B56174E80D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14AA039C-5E30-4155-A201-7B56174E80D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

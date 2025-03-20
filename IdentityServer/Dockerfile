@@ -12,10 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["IdentityServer/src/IdentityServerHost.csproj", "IdentityServer/src/"]
-RUN dotnet restore "./IdentityServer/src/IdentityServerHost.csproj"
+COPY ["IdentityServer/IdentityServerHost.csproj", "IdentityServer/"]
+RUN dotnet restore "./IdentityServer//IdentityServerHost.csproj"
 COPY . .
-WORKDIR "/src/IdentityServer/src"
+WORKDIR "/src/IdentityServer"
 RUN dotnet build "./IdentityServerHost.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

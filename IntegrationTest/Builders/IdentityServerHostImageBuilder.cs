@@ -27,7 +27,7 @@ public class IdentityServerHostImageBuilder(IMessageSink logger)
 		{
 			DockerImage = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory().DirectoryPath)
-            .WithDockerfile("IdentityServer/src/Dockerfile")
+            .WithDockerfile("IdentityServer/Dockerfile")
             .WithName(ImageName)
             .WithDeleteIfExists(true)
             .WithCleanUp(true)
