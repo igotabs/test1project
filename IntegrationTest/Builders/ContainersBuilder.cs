@@ -14,6 +14,7 @@ namespace IntegrationTest.Builders
     [ExcludeFromCodeCoverage]
     public class ContainersBuilder : IAsyncDisposable
     {
+	    private readonly IMessageSink _messageSink;
 	    private string _network; 
 
         private readonly List<IContainer> _startedContainers = [];
@@ -21,7 +22,7 @@ namespace IntegrationTest.Builders
 		private readonly RedisContainerBuilder _redisContainerBuilder;
 		private readonly IdentityServerContainerBuilder _identityServerContainerBuilder;
 		private readonly HelloWorldApiContainerBuilder _helloWorldApiContainerBuilder;
-		private readonly ConsumerApiContainerBuilder _consumerApiContainerBuilder;
+		private ConsumerApiContainerBuilder _consumerApiContainerBuilder;
 
 
 		private readonly IdentityServerHostImageBuilder _identityServerImageBuilder;
@@ -30,7 +31,8 @@ namespace IntegrationTest.Builders
 
         public ContainersBuilder(IMessageSink messageSink)
         {
-			_network = NetworkResolverUtils.GetNetwork();
+	        _messageSink = messageSink;
+	        _network = NetworkResolverUtils.GetNetwork();
 
 			_identityServerImageBuilder = new IdentityServerHostImageBuilder(messageSink);
 			_helloWorldApiImageBuilder = new HelloWorldApiImageBuilder(messageSink);
@@ -40,7 +42,6 @@ namespace IntegrationTest.Builders
 			_redisContainerBuilder = new RedisContainerBuilder(messageSink, _network);
 			_identityServerContainerBuilder = new IdentityServerContainerBuilder(messageSink, _network);
 			_helloWorldApiContainerBuilder = new HelloWorldApiContainerBuilder(messageSink, _network);
-			_consumerApiContainerBuilder = new ConsumerApiContainerBuilder(messageSink, _network);
 		}
 
         public async Task BuildAndStartRedisAsync()
@@ -71,7 +72,21 @@ namespace IntegrationTest.Builders
 			await _consumerApiContainerBuilder.BuildAsync());
         }
 
-        public async ValueTask DisposeAsync()
+        public async Task<List<int>> BuildAndStartConsumerListAsync(int count)
+        {
+			var ports = new List<int>();
+			await _consumerApiImageBuilder.CreateConsumerApiFromDockerFileAsync();
+			for (var i = 0; i < count; i++)
+			{
+				_consumerApiContainerBuilder = new ConsumerApiContainerBuilder(_messageSink, _network);
+				var container = await _consumerApiContainerBuilder.BuildAsync();
+				_startedContainers.Add(container);
+				ports.Add(container.GetMappedPublicPort(8081));
+			}
+			return ports;
+		}
+
+		public async ValueTask DisposeAsync()
         {
 	        foreach (var container in _startedContainers)
 	        {

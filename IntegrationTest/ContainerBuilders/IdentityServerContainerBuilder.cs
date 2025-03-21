@@ -28,13 +28,10 @@ public class IdentityServerContainerBuilder
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
 		{ "ASPNETCORE_HTTP_PORTS", "8080" },
 		{ "ASPNETCORE_HTTPS_PORTS", "8081" },
-		//      - ASPNETCORE_HTTP_PORTS=8080
-		// - ASPNETCORE_HTTPS_PORTS=8081
-		//{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 	};
-	public string IdentityServerContainerName { get; set; } = "identityserver";
+	public string IdentityServerContainerName { get; set; } = $"identityserver_{DateTime.Now:HHmmssfff}";
 	public int ExposedPort { get; set; } = 5001;
 
 	public IdentityServerContainerBuilder(

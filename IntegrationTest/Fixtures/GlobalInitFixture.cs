@@ -17,6 +17,7 @@ public class GlobalInitFixture : XunitTestFramework, IDisposable
 #pragma warning restore S3881 // "IDisposable" should be implemented correctly
 {
 	private readonly IMessageSink _logger;
+	public static List<int> ConsumerContainresPorts = new();
 	public ContainersBuilder ContainersBuilder { get; set; }
 
 	public GlobalInitFixture(IMessageSink logger) : base(logger)
@@ -29,7 +30,7 @@ public class GlobalInitFixture : XunitTestFramework, IDisposable
         StartContainers();
     }
 
-	private  void StartContainers()
+	private void StartContainers()
     {
 	    _logger.OnMessage(new DiagnosticMessage($"Starting all containers in Fixture {GetType().Name}"));
 
@@ -38,8 +39,9 @@ public class GlobalInitFixture : XunitTestFramework, IDisposable
 
 		ContainersBuilder.BuildAndStartRedisAsync().GetAwaiter().GetResult();
 		ContainersBuilder.BuildAndStartIdentityServerAsync().GetAwaiter().GetResult();
+		Thread.Sleep(5000);
 		ContainersBuilder.BuildAndStartHelloWorldAsync().GetAwaiter().GetResult();
-		ContainersBuilder.BuildAndStartConsumerAsync().GetAwaiter().GetResult();
+		ConsumerContainresPorts = ContainersBuilder.BuildAndStartConsumerListAsync(1).GetAwaiter().GetResult();
 
 
 		_logger.OnMessage(new DiagnosticMessage($"Finished creation of all containers in Fixture {GetType().Name}"));

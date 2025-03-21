@@ -21,17 +21,16 @@ public class ConsumerApiContainerBuilder
 	private readonly IMessageSink _logger;
 	private readonly string _network;
 
-	private IContainer? ConsumerContainer { get; set; }
+	public IContainer? ConsumerContainer { get; set; }
 
 	public Dictionary<string, string> Config { get; } = new()
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
 		{"ASPNETCORE_URLS", "http://*:8081"},
-
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 	};
-	public string ConsumerApiContainerName { get; set; } = "consumerapi";
+	public string ConsumerApiContainerName { get; set; } = $"ConsumerApi_{Guid.NewGuid().ToString("N")}";
 	public int ExposedPort { get; set; } = 5003;
 
 	public ConsumerApiContainerBuilder(
@@ -57,18 +56,16 @@ public class ConsumerApiContainerBuilder
 
 		try
 		{
-			ConsumerContainer = new ContainerBuilder()
+ConsumerApiContainerName = $"ConsumerApi_{Guid.NewGuid().ToString("N")}";
+
+	ConsumerContainer = new ContainerBuilder()
 				.WithImage(imageName + ":latest")
 				.WithNetwork(_network)
-				//.WithCreateParameterModifier(param => param.User = "root")
 				.WithName(ConsumerApiContainerName)
 				.WithEnvironment(Config)
-				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
-				//.WithPortBinding(8080, true)
-				.WithPortBinding(ExposedPort, 8081)
+				.WithPortBinding(8081, true)
 				.WithCleanUp(true)
 				.WithAutoRemove(true)
-				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)
