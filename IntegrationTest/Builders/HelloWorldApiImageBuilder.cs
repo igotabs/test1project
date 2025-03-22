@@ -47,7 +47,7 @@ public class HelloWorldApiImageBuilder(IMessageSink logger)
 		}
 		else
 		{
-			logger.Log("Reusing already created OPC UA Server image");
+			logger.Log("Reusing already created Hello World Server image");
 		}
 
 

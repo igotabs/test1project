@@ -47,7 +47,7 @@ public class ConsumerApiImageBuilder(IMessageSink logger)
         }
         else
         {
-	        logger.Log("Reusing already created OPC UA Server image");
+	        logger.Log("Reusing already created Consumer Server image");
         }
 		logger.Log("Validator image has created successfully");
     }

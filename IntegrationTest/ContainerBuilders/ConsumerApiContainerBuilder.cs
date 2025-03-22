@@ -43,14 +43,14 @@ public class ConsumerApiContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(ConsumerApiImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureConsumerContainer(ConsumerApiImageBuilder.ImageName);
+		await StartConsumerContainerAsync();
 
 		return ConsumerContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureConsumerContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Consumer container from image '{imageName}'");
 
@@ -78,7 +78,7 @@ ConsumerApiContainerName = $"ConsumerApi_{Guid.NewGuid().ToString("N")}";
 		_logger.Log("Consumer container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartConsumerContainerAsync()
 	{
 		try
 		{

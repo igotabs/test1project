@@ -42,14 +42,14 @@ public class HelloWorldApiContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(HelloWorldApiImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureHelloWorldContainer(HelloWorldApiImageBuilder.ImageName);
+		await StartHelloWorldContainerAsync();
 
 		return HelloWorldContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureHelloWorldContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Hello World container from image '{imageName}'");
 
@@ -77,7 +77,7 @@ public class HelloWorldApiContainerBuilder
 		_logger.Log("Hello World container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartHelloWorldContainerAsync()
 	{
 		try
 		{

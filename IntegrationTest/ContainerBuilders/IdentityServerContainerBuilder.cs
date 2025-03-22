@@ -44,14 +44,14 @@ public class IdentityServerContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(IdentityServerHostImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureIdentityServerContainer(IdentityServerHostImageBuilder.ImageName);
+		await StartIdentityServerContainerAsync();
 
 		return IdentityServerContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureIdentityServerContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Idenyty Server container from image '{imageName}'");
 		var appData = Environment.GetEnvironmentVariable("APPDATA");
@@ -91,7 +91,7 @@ public class IdentityServerContainerBuilder
 		_logger.Log("Idenyty Server container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartIdentityServerContainerAsync()
 	{
 		try
 		{

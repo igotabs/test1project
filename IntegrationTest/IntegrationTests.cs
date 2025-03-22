@@ -9,21 +9,27 @@ namespace IntegrationTest
 	public class IntegrationTests
 	{
 		[Fact]
-		public async Task CallConsumeHelloWorldWithCountOne()
+		public async Task PerfomanceTest()
 		{
-			await Task.Delay(1000);
-			var count = 10;
-			foreach (var consumerPort in GlobalInitFixture.ConsumerContainresPorts)
+			var consumerToHelloRequestCount = 1;
+			var tasks = GlobalInitFixture.ConsumerContainersPorts.Select(async consumerInstancesPort =>
 			{
-				var httpClient = new HttpClient();
-				httpClient.BaseAddress = new Uri($"http://localhost:{consumerPort}/");
-				//warm-up
-				var response = await httpClient.GetStringAsync($"ConsumeHelloWorld?count={count}");
-				var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
+				int consumerCallsCount = 5;
+				await Parallel.ForEachAsync(
+					Enumerable.Range(1, consumerCallsCount),
+					async (index, cancellationToken) =>
+					{
+						var httpClient = new HttpClient();
+						httpClient.BaseAddress = new Uri($"http://localhost:{consumerInstancesPort}/");
+						var response =
+							await httpClient.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+						var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
-				Assert.NotNull(result);
-				Assert.Equal(count, result.Count);
-			}
+						Assert.NotNull(result);
+						Assert.Equal(consumerToHelloRequestCount, result.Count);
+					});
+			});
+			await Task.WhenAll(tasks);
 		}
 	}
 }

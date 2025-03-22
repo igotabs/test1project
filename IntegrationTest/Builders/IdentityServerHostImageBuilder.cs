@@ -47,7 +47,7 @@ public class IdentityServerHostImageBuilder(IMessageSink logger)
 		}
 		else
 		{
-			logger.Log("Reusing already created OPC UA Server image");
+			logger.Log("Reusing already created Identity Server image");
 		}
 		logger.Log("Validator image has created successfully");
     }

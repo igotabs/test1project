@@ -1,4 +1,5 @@
 using ConsumerApi.Models;
+using IdentityServerHost;
 using Newtonsoft.Json;
 using ServiceTests.Fixtures;
 
@@ -15,11 +16,23 @@ namespace ServiceTests
 		[Fact]
 		public async Task CallConsumeHelloWorldWithCountOne() 
 		{
-			var response = await _fixture.ConsumerClient.GetStringAsync($"ConsumeHelloWorld?count=1");
-			var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
+			var consumerToHelloRequestCount = 1;
+			var tasks = _fixture.ConsumerClients.Select(async client =>
+			{
+				int consumerCallsCount = 1;
+				for (int i = 0; i < consumerCallsCount; i++)
+				{
 
-			Assert.NotNull(result);
-			Assert.Equal(1, result.Count);
+					var response =
+						await client.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+					var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
+
+					Assert.NotNull(result);
+					Assert.Equal(consumerToHelloRequestCount, result.Count);
+				}
+			});
+
+			await Task.WhenAll(tasks);
 		}
 	}
 }
