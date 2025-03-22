@@ -28,13 +28,10 @@ public class IdentityServerContainerBuilder
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
 		{ "ASPNETCORE_HTTP_PORTS", "8080" },
 		{ "ASPNETCORE_HTTPS_PORTS", "8081" },
-		//      - ASPNETCORE_HTTP_PORTS=8080
-		// - ASPNETCORE_HTTPS_PORTS=8081
-		//{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 	};
-	public string IdentityServerContainerName { get; set; } = "identityserver";
+	public string IdentityServerContainerName { get; set; } = $"identityserver_{DateTime.Now:HHmmssfff}";
 	public int ExposedPort { get; set; } = 5001;
 
 	public IdentityServerContainerBuilder(
@@ -47,14 +44,14 @@ public class IdentityServerContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(IdentityServerHostImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureIdentityServerContainer(IdentityServerHostImageBuilder.ImageName);
+		await StartIdentityServerContainerAsync();
 
 		return IdentityServerContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureIdentityServerContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Idenyty Server container from image '{imageName}'");
 		var appData = Environment.GetEnvironmentVariable("APPDATA");
@@ -94,7 +91,7 @@ public class IdentityServerContainerBuilder
 		_logger.Log("Idenyty Server container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartIdentityServerContainerAsync()
 	{
 		try
 		{

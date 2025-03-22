@@ -24,8 +24,7 @@ public class RedisContainerBuilder
 
 	private IContainer? RedisContainer { get; set; }
 
-
-	public string RedisContainerName { get; set; } = "redis-1";
+	public string RedisContainerName { get; set; } = $"redis_{Guid.NewGuid().ToString("N")}";
 	public int ExposedPort { get; set; } = 6379;
 
 	public RedisContainerBuilder(
@@ -38,14 +37,14 @@ public class RedisContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(HelloWorldApiImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureRedisContainer(HelloWorldApiImageBuilder.ImageName);
+		await StartRedisContainerAsync();
 
 		return RedisContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureRedisContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Redis container from image '{imageName}'");
 
@@ -69,7 +68,7 @@ public class RedisContainerBuilder
 		_logger.Log("Redis container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartRedisContainerAsync()
 	{
 		try
 		{

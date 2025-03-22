@@ -27,9 +27,9 @@ public class HelloWorldController : ControllerBase
             ConfigUpdateResourceLock,
             _redlockExpiration);
         if (!redlock.IsAcquired)
-            return null;
+            throw new Exception("Could not acquire distributed lock");
 
-        var responseObject = new
+		var responseObject = new
         {
             message = "Hello, World!",
             timestamp = DateTime.Now

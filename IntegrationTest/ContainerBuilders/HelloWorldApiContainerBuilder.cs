@@ -25,12 +25,11 @@ public class HelloWorldApiContainerBuilder
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
 		{"ASPNETCORE_URLS", "http://*:8081"},
-		{ "ASPNETCORE_Kestrel:Certificates:Default:Password", "Development" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 		{ "Redis__Host", "redis" }
 	};
-	public string HelloWorldApiContainerName { get; set; } = "helloworldapi";
+	public string HelloWorldApiContainerName { get; set; } = $"helloworldapi_{DateTime.Now:HHmmssfff}";
 	public int ExposedPort { get; set; } = 5002;
 
 	public HelloWorldApiContainerBuilder(
@@ -43,14 +42,14 @@ public class HelloWorldApiContainerBuilder
 
 	public async Task<IContainer> BuildAsync()
 	{
-		ConfigureOpcUaServerContainer(HelloWorldApiImageBuilder.ImageName);
-		await StartOpcUaServerContainerAsync();
+		ConfigureHelloWorldContainer(HelloWorldApiImageBuilder.ImageName);
+		await StartHelloWorldContainerAsync();
 
 		return HelloWorldContainer!;
 	}
 
 
-	private void ConfigureOpcUaServerContainer(string imageName)
+	private void ConfigureHelloWorldContainer(string imageName)
 	{
 		_logger.Log($"Starting configuring Hello World container from image '{imageName}'");
 
@@ -63,12 +62,9 @@ public class HelloWorldApiContainerBuilder
 				.WithName(HelloWorldApiContainerName)
 				.WithNetworkAliases(new[] { "helloworldapi" })
 				.WithEnvironment(Config)
-				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
-				//.WithPortBinding(8080, true)
 				.WithPortBinding(ExposedPort, 8081)
 				.WithCleanUp(true)
 				.WithAutoRemove(true)
-				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)
@@ -81,7 +77,7 @@ public class HelloWorldApiContainerBuilder
 		_logger.Log("Hello World container has been configured successfully");
 	}
 
-	private async Task StartOpcUaServerContainerAsync()
+	private async Task StartHelloWorldContainerAsync()
 	{
 		try
 		{
