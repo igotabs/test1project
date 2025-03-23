@@ -23,8 +23,15 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./IdentityServerHost.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+#generate the cert, define the path to store it and password to use
+WORKDIR /
+RUN dotnet dev-certs https
+RUN mkdir -p /https
+RUN dotnet dev-certs https -ep /https/identity.pfx -p 123
+RUN dotnet dev-certs https --trust
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+COPY --chmod=0755 --from=publish /https/* /https/
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "IdentityServerHost.dll"]
