@@ -27,7 +27,9 @@ public class HelloWorldApiContainerBuilder
 		{"ASPNETCORE_URLS", "http://*:8081"},
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
-		{ "Redis__Host", "redis" }
+		{ "Redis__Host", "redis" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Password", "123" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Path", "/https/helloworld.pfx" },
 	};
 	public string HelloWorldApiContainerName { get; set; } = $"helloworldapi_{DateTime.Now:HHmmssfff}";
 	public int ExposedPort { get; set; } = 5002;

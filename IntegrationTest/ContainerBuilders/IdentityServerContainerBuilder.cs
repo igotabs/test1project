@@ -30,6 +30,8 @@ public class IdentityServerContainerBuilder
 		{ "ASPNETCORE_HTTPS_PORTS", "8081" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Password", "123" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Path", "/https/identity.pfx" }
 	};
 	public string IdentityServerContainerName { get; set; } = $"identityserver_{DateTime.Now:HHmmssfff}";
 	public int ExposedPort { get; set; } = 5001;

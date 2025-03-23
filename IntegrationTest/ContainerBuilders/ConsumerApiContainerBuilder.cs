@@ -29,6 +29,8 @@ public class ConsumerApiContainerBuilder
 		{"ASPNETCORE_URLS", "http://*:8081"},
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Password", "123" },
+		{ "ASPNETCORE_Kestrel__Certificates__Default__Path", "/https/consumer.pfx" },
 	};
 	public string ConsumerApiContainerName { get; set; } = $"ConsumerApi_{Guid.NewGuid().ToString("N")}";
 	public int ExposedPort { get; set; } = 5003;

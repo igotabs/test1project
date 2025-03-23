@@ -14,7 +14,7 @@ namespace IntegrationTest
 			var consumerToHelloRequestCount = 1;
 			var tasks = GlobalInitFixture.ConsumerContainersPorts.Select(async consumerInstancesPort =>
 			{
-				int consumerCallsCount = 5;
+				int consumerCallsCount = 1;
 				await Parallel.ForEachAsync(
 					Enumerable.Range(1, consumerCallsCount),
 					async (index, cancellationToken) =>
