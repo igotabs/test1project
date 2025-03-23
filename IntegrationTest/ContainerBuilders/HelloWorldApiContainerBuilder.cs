@@ -24,7 +24,7 @@ public class HelloWorldApiContainerBuilder
 	public Dictionary<string, string> Config { get; } = new()
 	{
 		{ "ASPNETCORE_ENVIRONMENT", "Development" },
-		{"ASPNETCORE_URLS", "http://*:8081"},
+		{ "ASPNETCORE_URLS", "http://*:8081" },
 		{ "IdentityServer__BaseUrl", "https://identityserverhost:8081" },
 		{ "HelloWorldApi__BaseUrl", "http://helloworldapi:8081" },
 		{ "Redis__Host", "redis" },

@@ -63,24 +63,13 @@ public class IdentityServerContainerBuilder
 			IdentityServerContainer = new ContainerBuilder()
 				.WithImage(imageName + ":latest")
 				.WithNetwork(_network)
-				//.WithCreateParameterModifier(param => param.User = "root")
 				.WithName(IdentityServerContainerName)
 				.WithNetworkAliases(new[] { "identityserverhost" })
 				.WithEnvironment(Config)
-				//.WithHostname(Environment.GetEnvironmentVariable("COMPUTERNAME"))
 				.WithPortBinding(56205, 8080)
 				.WithPortBinding(ExposedPort,8081)
-				.WithBindMount(
-					Path.Combine(appData, "Microsoft", "UserSecrets"),
-					"/home/app/.microsoft/usersecrets",
-					AccessMode.ReadOnly)
-				.WithBindMount(
-					Path.Combine(appData, "ASP.NET", "Https"),
-					"/home/app/.aspnet/https",
-					AccessMode.ReadOnly)
 				.WithCleanUp(true)
 				.WithAutoRemove(true)
-				//.WithLogger(ConsoleLogger.Instance)
 				.Build();
 		}
 		catch (Exception e)
