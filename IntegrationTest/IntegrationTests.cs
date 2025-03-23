@@ -11,7 +11,7 @@ namespace IntegrationTest
 		[Fact]
 		public async Task PerfomanceTest()
 		{
-			var consumerToHelloRequestCount = 1;
+			var consumerToHelloRequestCount = 1000;
 			var tasks = GlobalInitFixture.ConsumerContainersPorts.Select(async consumerInstancesPort =>
 			{
 				int consumerCallsCount = 1;
@@ -22,7 +22,7 @@ namespace IntegrationTest
 						var httpClient = new HttpClient();
 						httpClient.BaseAddress = new Uri($"http://localhost:{consumerInstancesPort}/");
 						var response =
-							await httpClient.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+							await httpClient.GetStringAsync($"ConsumeHelloWorld/{consumerToHelloRequestCount}");
 						var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
 						Assert.NotNull(result);

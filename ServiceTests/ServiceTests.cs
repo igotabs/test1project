@@ -16,7 +16,7 @@ namespace ServiceTests
 		[Fact]
 		public async Task CallConsumeHelloWorldWithCountOne() 
 		{
-			var consumerToHelloRequestCount = 1;
+			var consumerToHelloRequestCount = 10;
 			var tasks = _fixture.ConsumerClients.Select(async client =>
 			{
 				int consumerCallsCount = 1;
@@ -24,7 +24,7 @@ namespace ServiceTests
 				{
 
 					var response =
-						await client.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+						await client.GetStringAsync($"ConsumeHelloWorld/{consumerToHelloRequestCount}");
 					var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
 					Assert.NotNull(result);

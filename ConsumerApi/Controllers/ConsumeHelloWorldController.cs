@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using ConsumerApi.HttpClients;
 using ConsumerApi.Models;
 using ConsumerApi.TokenService;
@@ -11,9 +12,28 @@ using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 
 namespace ConsumerApi.Controllers
 {
+
+	// Thread-safe random generator
+	static class RandomInterval
+	{
+		private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
+
+		public static TimeSpan GetRandomDelay(int minSeconds, int maxSeconds)
+		{
+			var byteArray = new byte[4];
+			_rng.GetBytes(byteArray);
+			int range = maxSeconds - minSeconds;
+			int randomValue = BitConverter.ToInt32(byteArray, 0) & int.MaxValue; // Force positive
+			return TimeSpan.FromSeconds(minSeconds + (randomValue % range));
+		}
+	}
+
+
 	[ApiController]
     [Route("[controller]")]
     public class ConsumeHelloWorldController : ControllerBase
@@ -34,10 +54,25 @@ namespace ConsumerApi.Controllers
             _helloWorldApiClient = helloWorldApiClient;
         }
 
-        [HttpGet(Name = "GetHelloWorld")]
-        public async Task<IEnumerable<HelloWorld?>> Get([FromQuery] int count = 1)
+        [HttpGet("{count}", Name = "GetHelloWorld")]
+        public async Task<IEnumerable<HelloWorld?>> Get(int count = 1)
         {
-            var token = await _tokenService.GetAccessTokenAsync();
+	        AsyncRetryPolicy<string> tokenRetryPolicy = Policy<string>
+				.Handle<Exception>()
+		        .OrResult(string.IsNullOrEmpty)
+				.WaitAndRetryAsync(3,
+			        retryAttempt => RandomInterval.GetRandomDelay(1, 2)); // 1-3 seconds
+
+	        AsyncRetryPolicy<HelloWorld?> serviceRetryPolicy = Policy<HelloWorld?>
+		        .Handle<Exception>()
+		        .OrResult(r => r == null)
+		        .WaitAndRetryAsync(3,
+			        retryAttempt => RandomInterval.GetRandomDelay(1, 2)); // 2-5 seconds
+
+
+
+
+			var token = await tokenRetryPolicy.ExecuteAsync(() => _tokenService.GetAccessTokenAsync());
 
             var results = new ConcurrentBag<HelloWorld>();
 
@@ -45,7 +80,7 @@ namespace ConsumerApi.Controllers
                 Enumerable.Range(1, count),
                 async (index, cancellationToken) =>
                 {
-                    var item = await CallServiceAsync(token);
+                    var item = await serviceRetryPolicy.ExecuteAsync(() => CallServiceAsync(token));
                     if (item != null) results.Add(item);
                 }
             );
