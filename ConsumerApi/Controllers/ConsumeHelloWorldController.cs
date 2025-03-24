@@ -49,7 +49,7 @@ namespace ConsumerApi.Controllers
 					  {
 						  try
 						  {
-							  var item = await CallServiceAsync(token);
+							  var item = await CallServiceAsync();
 							  if (item != null) results.Add(item);
 						  }
 						  catch (HttpRequestException ex) when (ex.StatusCode.HasValue)
@@ -74,7 +74,7 @@ namespace ConsumerApi.Controllers
 			});
 
 		}
-		async Task<HelloWorld?> CallServiceAsync(string token)
+		async Task<HelloWorld?> CallServiceAsync()
 		{
 			try
 			{
