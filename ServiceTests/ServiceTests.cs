@@ -24,7 +24,7 @@ namespace ServiceTests
 				{
 
 					var response =
-						await client.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+						await client.GetStringAsync($"ConsumeHelloWorld/{consumerToHelloRequestCount}");
 					var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
 					Assert.NotNull(result);

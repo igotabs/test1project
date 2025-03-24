@@ -22,7 +22,7 @@ namespace IntegrationTest
 						var httpClient = new HttpClient();
 						httpClient.BaseAddress = new Uri($"http://localhost:{consumerInstancesPort}/");
 						var response =
-							await httpClient.GetStringAsync($"ConsumeHelloWorld?count={consumerToHelloRequestCount}");
+							await httpClient.GetStringAsync($"ConsumeHelloWorld/{consumerToHelloRequestCount}");
 						var result = JsonConvert.DeserializeObject<List<HelloWorld>>(response);
 
 						Assert.NotNull(result);

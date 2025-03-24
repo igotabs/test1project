@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using ConsumerApi.HttpClients;
 using ConsumerApi.Models;
@@ -34,33 +35,58 @@ namespace ConsumerApi.Controllers
             _helloWorldApiClient = helloWorldApiClient;
         }
 
-        [HttpGet(Name = "GetHelloWorld")]
-        public async Task<IEnumerable<HelloWorld?>> Get([FromQuery] int count = 1)
-        {
-            var token = await _tokenService.GetAccessTokenAsync();
-
-            var results = new ConcurrentBag<HelloWorld>();
-
-            await Parallel.ForEachAsync(
-                Enumerable.Range(1, count),
-                async (index, cancellationToken) =>
-                {
-                    var item = await CallServiceAsync(token);
-                    if (item != null) results.Add(item);
-                }
-            );
-
-            return results.ToList();
-        }
-        async Task<HelloWorld?> CallServiceAsync(string token)
-        {
+		[HttpGet("{count}", Name = "GetHelloWorld")]
+		public async Task<ActionResult<IEnumerable<HelloWorld?>>> Get(int count = 1)
+		{
+			var token = await _tokenService.GetAccessTokenAsync();
 			_helloWorldApiClient.Client.SetBearerToken(token);
-            var response = await _helloWorldApiClient.Client.GetStringAsync($"HelloWorld");
+			var results = new ConcurrentBag<HelloWorld>();
+			var errors = new ConcurrentBag<(HttpStatusCode StatusCode, string ErrorMessage)>();
 
-            Console.WriteLine(response.PrettyPrintJson());
-            var result = JsonConvert.DeserializeObject<HelloWorld>(response);
+			await Parallel.ForEachAsync(
+					  Enumerable.Range(1, count),
+					  async (index, cancellationToken) =>
+					  {
+						  try
+						  {
+							  var item = await CallServiceAsync(token);
+							  if (item != null) results.Add(item);
+						  }
+						  catch (HttpRequestException ex) when (ex.StatusCode.HasValue)
+						  {
+							  errors.Add((ex.StatusCode.Value, ex.Message));
+						  }
+						  catch (Exception ex)
+						  {
+							  errors.Add((HttpStatusCode.InternalServerError, ex.Message));
+						  }
+					  }
+				  );
+			if (errors.IsEmpty)
+				return results.ToList();
 
-            return result;
-        }
-    }
+			var errorDetails = errors.Select(e => $"Status {e.StatusCode}: {e.ErrorMessage}");
+			return StatusCode(500, new
+			{
+				Message = "Partial success with errors.",
+				Results = results.ToList(),
+				Errors = errorDetails
+			});
+
+		}
+		async Task<HelloWorld?> CallServiceAsync(string token)
+		{
+			try
+			{
+				var response = await _helloWorldApiClient.Client.GetStringAsync($"HelloWorld");
+				var result = JsonConvert.DeserializeObject<HelloWorld>(response);
+				return result;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+		}
+	}
 }
