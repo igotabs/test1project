@@ -27,7 +27,7 @@ public class HelloWorldController : ControllerBase
             ConfigUpdateResourceLock,
             _redlockExpiration);
         if (!redlock.IsAcquired)
-	        return StatusCode(StatusCodes.Status409Conflict, "Operation skipped: could not acquire distributed lock.");
+	        return StatusCode(StatusCodes.Status423Locked, "Operation skipped: could not acquire distributed lock.");
 
 		var responseObject = new
         {

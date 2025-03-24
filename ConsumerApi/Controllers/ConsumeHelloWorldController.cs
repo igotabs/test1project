@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using ConsumerApi.HttpClients;
@@ -72,30 +73,42 @@ namespace ConsumerApi.Controllers
 
 
 
-			var token = await tokenRetryPolicy.ExecuteAsync(() => _tokenService.GetAccessTokenAsync());
+	        var token = await _tokenService.GetAccessTokenAsync();
+	        _helloWorldApiClient.Client.SetBearerToken(token);
+	        var results = new ConcurrentBag<HelloWorld>();
+	        var errors = new ConcurrentBag<(HttpStatusCode StatusCode, string ErrorMessage)>();
 
-            var results = new ConcurrentBag<HelloWorld>();
-
-            await Parallel.ForEachAsync(
+			await Parallel.ForEachAsync(
                 Enumerable.Range(1, count),
                 async (index, cancellationToken) =>
                 {
-                    var item = await serviceRetryPolicy.ExecuteAsync(() => CallServiceAsync(token));
+	                var item = await serviceRetryPolicy.ExecuteAsync(() => CallServiceAsync(token));
                     if (item != null) results.Add(item);
                 }
             );
 
-            return results.ToList();
-        }
-        async Task<HelloWorld?> CallServiceAsync(string token)
-        {
-			_helloWorldApiClient.Client.SetBearerToken(token);
-            var response = await _helloWorldApiClient.Client.GetStringAsync($"HelloWorld");
+			var errorDetails = errors.Select(e => $"Status {e.StatusCode}: {e.ErrorMessage}");
+			return StatusCode(500, new
+			{
+				Message = "Partial success with errors.",
+				Results = results.ToList(),
+				Errors = errorDetails
+			});
 
-            Console.WriteLine(response.PrettyPrintJson());
-            var result = JsonConvert.DeserializeObject<HelloWorld>(response);
-
-            return result;
-        }
-    }
+		}
+		async Task<HelloWorld?> CallServiceAsync()
+		{
+			try
+			{
+				var response = await _helloWorldApiClient.Client.GetStringAsync($"HelloWorld");
+				var result = JsonConvert.DeserializeObject<HelloWorld>(response);
+				return result;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+		}
+	}
 }
